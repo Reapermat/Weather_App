@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ideo weather</string>
+    <string name="check_weather">Sprawdź pogodę</string>
+    <string name="enter_city">Dodaj miasto</string>
+    <string name="your_location">Twoja lokalizacja: </string>
+    <string name="weather_not_found">Nie można znaleźć pogody</string>
+    <string name="back_to_main">Wróć do main</string>
+    <string name="canceled">Anulowano</string>
+    <string name="swipe_to_delete">Przesuń aby usunąć</string>
+    <string name="enter_new_city">Dodaj nowe miasto</string>
+    <string name="enter_valid_city">Dodaj poprawne miasto</string>
+    <string name="cancel">Anuluj</string>
+    <string name="next_days">5 dniowa prognoza</string>
+</resources>

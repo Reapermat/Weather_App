@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Ideo weather</string>
+    <string name="tab_text_1" translatable="false">Tab 1</string>
+    <string name="tab_text_2" translatable="false">Tab 2</string>
+    <string name="check_weather">Check the weather</string>
+    <string name="enter_city">Enter a City</string>
+    <string name="weather_not_found">Could not find weather</string>
+    <string name="your_location">Your location: </string>
+    <string name="swipe_to_delete">Swipe to delete</string>
+    <string name="back_to_main">Back to main</string>
+    <string name="canceled">Canceled</string>
+    <string name="enter_new_city">Enter new City</string>
+    <string name="enter_valid_city">Enter Valid City</string>
+    <string name="cancel">Cancel</string>
+    <string name="next_days">5 day forecast</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="title_activity_view_pager">ViewPagerActivity</string>
+</resources>
