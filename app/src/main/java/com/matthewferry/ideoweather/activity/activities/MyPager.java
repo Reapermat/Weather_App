@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather;
+package com.matthewferry.ideoweather.activity.activities;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.matthewferry.ideoweather.R;
 
 public class MyPager extends PagerAdapter {
 
@@ -30,7 +32,7 @@ public class MyPager extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.activity_view_pager, null);
-        TextView textView = view.findViewById(R.id.nextDays);
+        //TextView textView = view.findViewById(R.id.firstDay);
         container.addView(view);
         return view;
     }

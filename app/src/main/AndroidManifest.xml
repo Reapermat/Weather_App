@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,9 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ViewPagerActivity"></activity>
-        <activity android:name=".Favorite" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.activities.ViewPagerActivity"></activity>
+        <activity android:name=".activity.activities.FavoriteActivity" />
+        <activity android:name=".activity.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

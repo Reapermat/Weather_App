@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather;
+package com.matthewferry.ideoweather.realm;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

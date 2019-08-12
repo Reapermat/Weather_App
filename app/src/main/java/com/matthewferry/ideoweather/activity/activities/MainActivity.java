@@ -1,11 +1,10 @@
-package com.matthewferry.ideoweather;
+package com.matthewferry.ideoweather.activity.activities;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -24,10 +23,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
+import com.matthewferry.ideoweather.activity.Locale.LocaleHelper;
+import com.matthewferry.ideoweather.R;
+import com.matthewferry.ideoweather.activity.weather_services_for_api.WeatherServiceLocationToday;
+import com.matthewferry.ideoweather.activity.weather_services_for_api.WeatherServiceNameToday;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -290,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToFavorite(View view){
 
-        Intent intent = new Intent(MainActivity.this, Favorite.class);
+        Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
         startActivity(intent);
 
     }

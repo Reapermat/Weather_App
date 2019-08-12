@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewPagerActivity">
+    tools:context=".activity.activities.ViewPagerActivity">
 
     <ImageView
         android:id="@+id/imageView3"
@@ -77,7 +77,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:textColor="@android:color/background_light"
-        android:text="TextView"
+        android:text=""
         android:gravity="center"
         android:textSize="36sp"
         android:textStyle="bold"

@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather;
+package com.matthewferry.ideoweather.activity.favorite_elements;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

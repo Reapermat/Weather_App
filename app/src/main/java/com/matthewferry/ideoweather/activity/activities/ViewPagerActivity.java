@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather;
+package com.matthewferry.ideoweather.activity.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,9 +12,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
+import com.matthewferry.ideoweather.R;
+import com.matthewferry.ideoweather.activity.weather_services_for_api.WeatherServiceNameNext;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;

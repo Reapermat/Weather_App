@@ -1,9 +1,8 @@
-package com.matthewferry.ideoweather;
+package com.matthewferry.ideoweather.activity.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -21,14 +20,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.annotations.Expose;
+import com.matthewferry.ideoweather.realm.CityDB;
+import com.matthewferry.ideoweather.realm.DataHelper;
+import com.matthewferry.ideoweather.activity.favorite_elements.NewCityDialog;
+import com.matthewferry.ideoweather.R;
+import com.matthewferry.ideoweather.activity.favorite_elements.RecyclerItemClickListener;
+import com.matthewferry.ideoweather.activity.favorite_elements.RecyclerViewAdapter;
 
 import java.security.SecureRandom;
 import java.util.Locale;
 
 import io.realm.Realm;
 
-public class Favorite extends AppCompatActivity implements NewCityDialog.NewCityListener {
+public class FavoriteActivity extends AppCompatActivity implements NewCityDialog.NewCityListener {
 
     Button backToMain;
     Realm realm;
@@ -83,13 +87,13 @@ public class Favorite extends AppCompatActivity implements NewCityDialog.NewCity
                     @Override public void onItemClick(View view, int position) {
 
                         String city = ((TextView) recyclerView.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.cities)).getText().toString();
-                        Intent intentText = new Intent(Favorite.this, MainActivity.class);
+                        Intent intentText = new Intent(FavoriteActivity.this, MainActivity.class);
                         intentText.putExtra("City", city);
                         startActivity(intentText);
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
-                        Toast.makeText(Favorite.this, swipeToDelete, 10).show();
+                        Toast.makeText(FavoriteActivity.this, swipeToDelete, 10).show();
                     }
                 })
         );
