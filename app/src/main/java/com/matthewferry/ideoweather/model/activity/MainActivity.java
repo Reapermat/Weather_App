@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather.activity.activities;
+package com.matthewferry.ideoweather.model.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -22,11 +23,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.model.LatLng;
-import com.matthewferry.ideoweather.activity.Locale.LocaleHelper;
+import com.matthewferry.ideoweather.model.helper.LocaleHelper;
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.activity.weather_services_for_api.WeatherServiceLocationToday;
-import com.matthewferry.ideoweather.activity.weather_services_for_api.WeatherServiceNameToday;
+import com.matthewferry.ideoweather.model.service.WeatherServiceLocationToday;
+import com.matthewferry.ideoweather.model.service.WeatherServiceNameToday;
+import com.matthewferry.ideoweather.model.util.WeatherResponseToday;
+import com.matthewferry.ideoweather.model.util.WeatherToday;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,8 +73,10 @@ public class MainActivity extends AppCompatActivity {
     String yourLocation;
     String lang;
     String nextDay;
+    View view;
     public String BaseUrl = "http://api.openweathermap.org/";
     public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
+    Toolbar myToolbar;
 
 
 
@@ -129,6 +135,18 @@ public class MainActivity extends AppCompatActivity {
         polish.setAlpha(0.5f);
         polish.setClickable(true);
         language = "en";
+        editor.putString("language", "en");
+        editor.commit();
+        savePreferences("language", "en");
+        recreate();
+        deleteCache(this);
+        setLangButton();
+        try {
+            editText.setText(getCity());
+            Log.i("city", getCity());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         if(!textView.getText().toString().equals("")) {
             if (!geo) {
                 check.callOnClick();
@@ -136,18 +154,12 @@ public class MainActivity extends AppCompatActivity {
                 setLocation.callOnClick();
             }
         }
-        editor.putString("language", "en");
-        editor.commit();
-        savePreferences("language", "en");
-        recreate();
-        deleteCache(this);
-        setLangButton();
+
     }
 
     public void ToPolish(View view){
 
         LocaleHelper.setLocale(this, "pl");
-
         check.setText(checkWeather_s);
         editText.setHint(enterCity);
         nextDayForecast.setText(nextDay);
@@ -156,6 +168,18 @@ public class MainActivity extends AppCompatActivity {
         english.setAlpha(0.5f);
         english.setClickable(true);
         language = "pl";
+        editor.putString("language", "pl");
+        editor.commit();
+        savePreferences("language", "pl");
+        recreate();
+        deleteCache(this);
+        setLangButton();
+        try {
+            editText.setText(getCity());
+            Log.i("city", getCity());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         if(!textView.getText().toString().equals("")) {
             if (!geo) {
                 check.callOnClick();
@@ -164,12 +188,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        editor.putString("language", "pl");
-        editor.commit();
-        savePreferences("language", "pl");
-        recreate();
-        deleteCache(this);
-        setLangButton();
     }
 
     public void loadLocale(){
@@ -207,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         weatherNotFound = this.getString(R.string.weather_not_found);
         yourLocation = this.getString(R.string.your_location);
         nextDay = this.getString(R.string.next_days);
+        myToolbar= findViewById(R.id.main_toolbar);
     }
 
 
@@ -227,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
             message = yourLocation + "\r\n";
             getCurrentDataFromLocation(String.valueOf(userLocation.latitude), String.valueOf(userLocation.longitude));
             } catch (Exception e) {
+            geo=false;
             e.printStackTrace();
             ToastMessage();
         }
@@ -391,13 +411,14 @@ public class MainActivity extends AppCompatActivity {
     public void getCurrentDataFromLocation(String lat, String longi) {
 
 
+        if (geo) {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BaseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
             WeatherServiceLocationToday service = retrofit.create(WeatherServiceLocationToday.class);
-            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, language,units, AppId);
+            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, language, units, AppId);
             call.enqueue(new Callback<WeatherResponseToday>() {
                 @Override
                 public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
@@ -407,16 +428,18 @@ public class MainActivity extends AppCompatActivity {
                         String name = weatherResponseToday.name;
                         String t = String.valueOf(weatherResponseToday.main.temp);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
-                        editText.setText(name);
-                        city = editText.getText().toString();
+                        city = name;
+                        editText.setText(getCity());
+                        Log.i("name", getCity());
 
                         message = yourLocation + " " + name + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
                         textView.setText(message);
                         done = true;
-                    }catch(Exception e){
+                        geo=false;
+                    } catch (Exception e) {
                         e.printStackTrace();
                         ToastMessage();
-                        done=false;
+                        done = false;
                     }
                 }
 
@@ -426,6 +449,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
 
         public void getLocationfromName (final String City) {
 
@@ -483,8 +507,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase, "en"));
@@ -515,7 +537,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -528,6 +549,10 @@ public class MainActivity extends AppCompatActivity {
         loadLocale();
         setLangButton();
         setTempButton();
+        editText.setText(getCity());
+        if(!editText.getText().toString().equals("")){
+            Check(view);
+        }
     }
 
 }

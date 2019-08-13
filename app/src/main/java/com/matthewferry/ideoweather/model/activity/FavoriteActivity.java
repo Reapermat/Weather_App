@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather.activity.activities;
+package com.matthewferry.ideoweather.model.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
@@ -20,12 +21,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.matthewferry.ideoweather.realm.CityDB;
-import com.matthewferry.ideoweather.realm.DataHelper;
-import com.matthewferry.ideoweather.activity.favorite_elements.NewCityDialog;
+import com.matthewferry.ideoweather.model.realm.CityDB;
+import com.matthewferry.ideoweather.model.helper.DataHelper;
+import com.matthewferry.ideoweather.view.NewCityDialog;
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.activity.favorite_elements.RecyclerItemClickListener;
-import com.matthewferry.ideoweather.activity.favorite_elements.RecyclerViewAdapter;
+import com.matthewferry.ideoweather.view.RecyclerItemClickListener;
+import com.matthewferry.ideoweather.model.adapter.RecyclerViewAdapter;
 
 import java.security.SecureRandom;
 import java.util.Locale;
@@ -34,7 +35,6 @@ import io.realm.Realm;
 
 public class FavoriteActivity extends AppCompatActivity implements NewCityDialog.NewCityListener {
 
-    Button backToMain;
     Realm realm;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton;
@@ -48,7 +48,9 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
     String backTo;
     String canceled;
     String swipeToDelete;
+    String fav;
     boolean ready = true;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,22 +60,14 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         loadPreferences();
         setContentView(R.layout.activity_favorite);
         realm = Realm.getDefaultInstance();
-        recyclerView = findViewById(R.id.myRecyclerView);
-        backToMain = findViewById(R.id.back);
-        cities = findViewById(R.id.cities);
-        floatingActionButton = findViewById(R.id.floatingActionButton);
-        dialogCity = findViewById(R.id.dialogCity);
-        english = findViewById(R.id.englishButton);
-        polish = findViewById(R.id.polishButton);
-        backTo = getString(R.string.back_to_main);
-        canceled = getString(R.string.canceled);
-        swipeToDelete = getString(R.string.swipe_to_delete);
-        backTo = getString(R.string.back_to_main);
-        pref = getSharedPreferences("MyPref", 0);
-        editor = pref.edit();
+        findViews();
         final DialogFragment addCityDialog = new NewCityDialog();
         SetUpRecyclerView();
-        backToMain.setText(backTo);
+       // backToMain.setText(backTo);
+        toolbar.setTitle(fav);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,11 +95,11 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
 
     }
 
-    public void backToMain(View view){
+   /* public void backToMain(View view){
         ready=false;
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
-    }
+    }*/
 
     public void onAddCity(String city) {
         SecureRandom secureRandom = new SecureRandom();
@@ -168,7 +162,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         editor.apply();
     }
 
-    private void loadPreferences(){
+    public void loadPreferences(){
         try {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
             lang = pref.getString("language", null);
@@ -179,6 +173,24 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void findViews(){
+        recyclerView = findViewById(R.id.myRecyclerView);
+        //backToMain = findViewById(R.id.back);
+        cities = findViewById(R.id.cities);
+        floatingActionButton = findViewById(R.id.floatingActionButton);
+        dialogCity = findViewById(R.id.dialogCity);
+        english = findViewById(R.id.englishButton);
+        polish = findViewById(R.id.polishButton);
+        backTo = getString(R.string.back_to_main);
+        canceled = getString(R.string.canceled);
+        swipeToDelete = getString(R.string.swipe_to_delete);
+        backTo = getString(R.string.back_to_main);
+        fav = getString(R.string.favorite);
+        pref = getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
+        toolbar=(Toolbar) findViewById(R.id.my_toolbar);
     }
 
     }

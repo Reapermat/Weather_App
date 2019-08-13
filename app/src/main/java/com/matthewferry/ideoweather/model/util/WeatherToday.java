@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather.activity.activities;
+package com.matthewferry.ideoweather.model.util;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

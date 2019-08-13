@@ -1,5 +1,7 @@
-package com.matthewferry.ideoweather.realm;
+package com.matthewferry.ideoweather.model.helper;
 
+
+import com.matthewferry.ideoweather.model.realm.CityDB;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;

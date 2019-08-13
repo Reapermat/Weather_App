@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather.activity.Locale;
+package com.matthewferry.ideoweather.model.helper;
 
 import android.annotation.TargetApi;
 import android.content.Context;

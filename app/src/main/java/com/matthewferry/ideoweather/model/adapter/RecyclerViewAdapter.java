@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather.activity.favorite_elements;
+package com.matthewferry.ideoweather.model.adapter;
 
 
 import android.support.annotation.NonNull;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.realm.CityDB;
+import com.matthewferry.ideoweather.model.realm.CityDB;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;

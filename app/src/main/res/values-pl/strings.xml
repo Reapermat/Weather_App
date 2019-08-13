@@ -12,4 +12,6 @@
     <string name="enter_valid_city">Dodaj poprawne miasto</string>
     <string name="cancel">Anuluj</string>
     <string name="next_days">5 dniowa prognoza</string>
+    <string name="please_wait">Proszę czekać</string>
+    <string name="favorite">Ulubione</string>
 </resources>

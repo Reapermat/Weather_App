@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather.activity.favorite_elements;
+package com.matthewferry.ideoweather.view;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.activity.activities.MainActivity;
+import com.matthewferry.ideoweather.model.activity.MainActivity;
 
 
 public class NewCityDialog extends DialogFragment {

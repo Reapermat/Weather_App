@@ -1,11 +1,13 @@
-package com.matthewferry.ideoweather.activity.activities;
+package com.matthewferry.ideoweather.model.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -13,9 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.activity.weather_services_for_api.WeatherServiceNameNext;
+import com.matthewferry.ideoweather.model.adapter.MyPagerAdapter;
+import com.matthewferry.ideoweather.model.service.WeatherServiceNameNext;
+import com.matthewferry.ideoweather.model.util.List;
+import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -30,7 +34,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     CircleIndicator circleIndicator;
-    MyPager myPager;
+    MyPagerAdapter myPager;
     TextView textView;
     EditText editText;
     SharedPreferences sharedPreferences;
@@ -39,25 +43,28 @@ public class ViewPagerActivity extends AppCompatActivity {
     public String BaseUrl = "http://api.openweathermap.org/";
     public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
     String message;
+    String wait;
+    ArrayList<String> weatherList;
+    String nextDays;
+    Toolbar myToolbar;
+    SharedPreferences.Editor editor;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_pager);
-
-        viewPager = findViewById(R.id.viewPager);
-        myPager = new MyPager(this);
-        viewPager.setAdapter(myPager);
-        circleIndicator = findViewById(R.id.circle);
-        circleIndicator.setViewPager(viewPager);
-        textView = findViewById(R.id.nextDays);
-        editText = findViewById(R.id.editText);
-        weatherNotFound = this.getString(R.string.weather_not_found);
-        yourLocation = this.getString(R.string.your_location);
-        getLocationfromName(MainActivity.getCity(), 6);
         loadPreferences();
+        setContentView(R.layout.activity_view_pager);
+        viewPager = findViewById(R.id.viewPager);
+        myPager = new MyPagerAdapter(this);
+        viewPager.setAdapter(myPager);
+        findViews();
+        textView.setText(wait);
+        myToolbar.setTitle(nextDays);
+        getLocationFromName(MainActivity.getCity(), 6);
         viewPager.addOnPageChangeListener(listener);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -71,18 +78,18 @@ public class ViewPagerActivity extends AppCompatActivity {
         public void onPageSelected(int i) {
 
             if(i==0){
-                getLocationfromName(MainActivity.getCity(), 6);
+                getLocationFromName(MainActivity.getCity(), 6);
             }
             else if(i==1){
-                getLocationfromName(MainActivity.getCity(), 14);
+                getLocationFromName(MainActivity.getCity(), 14);
             }else if(i==2){
-                getLocationfromName(MainActivity.getCity(), 22);
+                getLocationFromName(MainActivity.getCity(), 22);
             }else if(i==3)
-                getLocationfromName(MainActivity.getCity(), 30);
+                getLocationFromName(MainActivity.getCity(), 30);
             else if(i==4)
-                getLocationfromName(MainActivity.getCity(), 38);
+                getLocationFromName(MainActivity.getCity(), 38);
             else
-                getLocationfromName(MainActivity.getCity(), 0);
+                getLocationFromName(MainActivity.getCity(), 0);
         }
 
         @Override
@@ -93,19 +100,33 @@ public class ViewPagerActivity extends AppCompatActivity {
 
 
     private void loadPreferences(){
-        try{
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        }catch(Exception e){
+        try {
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            Log.i("language", sharedPreferences.getString("language", null));
+            //LocaleHelper.setLocale(this, lang);
+            setLocal(sharedPreferences.getString("language", null));
+
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    public void goToMain(View view){
-        Intent intent = new Intent(ViewPagerActivity.this, MainActivity.class);
-        startActivity(intent);
+    private void setLocal(String lang){
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        editor.putString("language", lang);
+        editor.apply();
     }
 
-    public void getLocationfromName (final String City, final int i) {
+    /*public void goToMain(View view){
+        Intent intent = new Intent(ViewPagerActivity.this, MainActivity.class);
+        startActivity(intent);
+    }*/
+
+    public void getLocationFromName (final String City, final int i) {
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BaseUrl)
@@ -129,6 +150,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
                         message = date +"\r\n\r\n" + City + "\r\n" + t + (char) 0x00B0 + sharedPreferences.getString("temperature", null) + "\r\n" +  list.get(i).weatherNext.get(0).getDescription();
                         textView.setText(message);
+                        //weatherList.add(message);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), City, 10).show();
@@ -142,6 +164,24 @@ public class ViewPagerActivity extends AppCompatActivity {
             });
         }
 
+        public ArrayList<String> getList(){
+        return weatherList;
+        }
+
+        private void findViews(){
+            viewPager = findViewById(R.id.viewPager);
+            myPager = new MyPagerAdapter(this);
+            viewPager.setAdapter(myPager);
+            circleIndicator = findViewById(R.id.circle);
+            circleIndicator.setViewPager(viewPager);
+            textView = findViewById(R.id.nextDays);
+            editText = findViewById(R.id.editText);
+            weatherNotFound = this.getString(R.string.weather_not_found);
+            yourLocation = this.getString(R.string.your_location);
+            wait = this.getString(R.string.please_wait);
+            nextDays = this.getString(R.string.next_days);
+            myToolbar = findViewById(R.id.view_toolbar);
+        }
 
 
 }

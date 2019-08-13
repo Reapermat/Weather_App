@@ -13,6 +13,8 @@
     <string name="enter_valid_city">Enter Valid City</string>
     <string name="cancel">Cancel</string>
     <string name="next_days">5 day forecast</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="favorite">Favorite</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

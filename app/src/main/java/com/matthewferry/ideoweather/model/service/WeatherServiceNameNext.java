@@ -1,6 +1,6 @@
-package com.matthewferry.ideoweather.activity.weather_services_for_api;
+package com.matthewferry.ideoweather.model.service;
 
-import com.matthewferry.ideoweather.activity.activities.WeatherResponseNextDays;
+import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
