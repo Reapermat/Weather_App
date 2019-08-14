@@ -27,8 +27,9 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.matthewferry.ideoweather.model.helper.LocaleHelper;
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.model.service.WeatherServiceLocationToday;
-import com.matthewferry.ideoweather.model.service.WeatherServiceNameToday;
+import com.matthewferry.ideoweather.model.interfaces.WeatherServiceLocationToday;
+import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameToday;
+import com.matthewferry.ideoweather.model.serviceGenerator.ServiceGenerator;
 import com.matthewferry.ideoweather.model.util.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.util.WeatherToday;
 
@@ -244,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             geo = true;
             message = yourLocation + "\r\n";
-            getCurrentDataFromLocation(String.valueOf(userLocation.latitude), String.valueOf(userLocation.longitude));
+            getWeatherFromLocation(String.valueOf(userLocation.latitude), String.valueOf(userLocation.longitude));
             } catch (Exception e) {
             geo=false;
             e.printStackTrace();
@@ -294,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
             message = "";
             geo = false;
             city=editText.getText().toString();
-            getLocationfromName(city);
+            getWeatherFromName(city);
         } catch (Exception e) {
                 done=false;
                 e.printStackTrace();
@@ -408,16 +409,11 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    public void getCurrentDataFromLocation(String lat, String longi) {
-
+    public void getWeatherFromLocation(String lat, String longi) {
 
         if (geo) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BaseUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
 
-            WeatherServiceLocationToday service = retrofit.create(WeatherServiceLocationToday.class);
+            WeatherServiceLocationToday service = ServiceGenerator.createService(WeatherServiceLocationToday.class);
             Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, language, units, AppId);
             call.enqueue(new Callback<WeatherResponseToday>() {
                 @Override
@@ -451,17 +447,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-        public void getLocationfromName (final String City) {
+        public void getWeatherFromName (final String City) {
 
                 if (City.equals(null)) {
                     ToastMessage();
                 } else {
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BaseUrl)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
 
-                    WeatherServiceNameToday service = retrofit.create(WeatherServiceNameToday.class);
+                    WeatherServiceNameToday service = ServiceGenerator.createService(WeatherServiceNameToday.class);
                     Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromName(City, language, units, AppId);
                     call.enqueue(new Callback<WeatherResponseToday>() {
                         @Override

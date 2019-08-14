@@ -1,6 +1,5 @@
 package com.matthewferry.ideoweather.model.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
@@ -9,14 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.model.adapter.MyPagerAdapter;
-import com.matthewferry.ideoweather.model.service.WeatherServiceNameNext;
+import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameNext;
+import com.matthewferry.ideoweather.model.serviceGenerator.ServiceGenerator;
 import com.matthewferry.ideoweather.model.util.List;
 import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
 
@@ -128,12 +127,8 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     public void getLocationFromName (final String City, final int i) {
 
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BaseUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
 
-            WeatherServiceNameNext service = retrofit.create(WeatherServiceNameNext.class);
+            WeatherServiceNameNext service = ServiceGenerator.createService(WeatherServiceNameNext.class);
             Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(City, MainActivity.getLanguage(), MainActivity.getUnits(), AppId);
             call.enqueue(new Callback<WeatherResponseNextDays>() {
                 @Override
