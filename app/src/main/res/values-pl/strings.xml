@@ -14,4 +14,7 @@
     <string name="next_days">5 dniowa prognoza</string>
     <string name="please_wait">Proszę czekać</string>
     <string name="favorite">Ulubione</string>
+    <string name="settings_name">Ustawienia</string>
+    <string name="language">Język: </string>
+    <string name="units">Jednostki: </string>
 </resources>

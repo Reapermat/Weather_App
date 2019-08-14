@@ -150,8 +150,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
 
     }
 
-
-
     private void setLocal(String lang){
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
@@ -181,8 +179,8 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         cities = findViewById(R.id.cities);
         floatingActionButton = findViewById(R.id.floatingActionButton);
         dialogCity = findViewById(R.id.dialogCity);
-        english = findViewById(R.id.englishButton);
-        polish = findViewById(R.id.polishButton);
+        /*english = findViewById(R.id.englishButton);
+        polish = findViewById(R.id.polishButton);*/
         backTo = getString(R.string.back_to_main);
         canceled = getString(R.string.canceled);
         swipeToDelete = getString(R.string.swipe_to_delete);

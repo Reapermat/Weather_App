@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:background="#010301"
         android:minHeight="?attr/actionBarSize"
-        tools:layout_editor_absoluteX="39dp"
-        tools:layout_editor_absoluteY="3dp">
+        app:popupTheme="@style/CustomPopUpStyle"
+        >
 
-        <ImageButton
+        <!--<ImageButton
             android:id="@+id/back"
             android:layout_width="35dp"
             android:layout_height="35dp"
@@ -35,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.077"
-            app:srcCompat="@drawable/star" />
+            app:srcCompat="@drawable/star" />-->
 
     </android.support.v7.widget.Toolbar>
 
@@ -101,7 +101,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.854" />
 
-    <Button
+   <!-- <Button
         android:id="@+id/celsiusButton"
         android:layout_width="46dp"
         android:layout_height="39dp"
@@ -181,7 +181,7 @@
         app:layout_constraintHorizontal_bias="0.151"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0" />-->
 
     <ImageButton
         android:id="@+id/setLocation"

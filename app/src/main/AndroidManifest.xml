@@ -13,10 +13,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".model.activity.ViewPagerActivity"
+        <activity android:name=".model.activity.SettingsActivity"
             android:parentActivityName=".model.activity.MainActivity"></activity>
-        <activity android:name=".model.activity.FavoriteActivity"
-            android:parentActivityName=".model.activity.MainActivity"/>
+        <activity
+            android:name=".model.activity.ViewPagerActivity"
+            android:parentActivityName=".model.activity.MainActivity" />
+        <activity
+            android:name=".model.activity.FavoriteActivity"
+            android:parentActivityName=".model.activity.MainActivity" />
         <activity android:name=".model.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

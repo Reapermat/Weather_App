@@ -38,4 +38,3 @@ dependencies {
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:2.0.24'
 }
-

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,6 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -35,6 +39,7 @@ import com.matthewferry.ideoweather.model.util.WeatherToday;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     String yourLocation;
     String lang;
     String nextDay;
+    String appname;
     View view;
     public String BaseUrl = "http://api.openweathermap.org/";
     public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
@@ -82,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void ToCelsius(View view){
+    /*public void ToCelsius(View view){
 
         units="metric";
         celsius.setClickable(false);
@@ -189,21 +195,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    }
+    }*/
 
-    public void loadLocale(){
+    /*public void loadLocale(){
         lang = pref.getString("language", "");
         LocaleHelper.setLocale(this, lang);
-    }
+    }*/
 
 
     public static String getLanguage(){
         return language;
     }
 
-    public static String getUnits(){
-        return units;
-    }
+
 
     public static String getCity(){
         return city;
@@ -213,28 +217,29 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.editText);
         textView = findViewById(R.id.textView);
-        celsius = findViewById(R.id.celsiusButton);
+        /*celsius = findViewById(R.id.celsiusButton);
         fahrenheit = findViewById(R.id.fahrenheitButton);
         english = findViewById(R.id.englishButton);
-        polish = findViewById(R.id.polishButton);
+        polish = findViewById(R.id.polishButton);*/
         check = findViewById(R.id.button);
         setLocation = findViewById(R.id.setLocation);
-        favorite = findViewById(R.id.back);
+        //favorite = findViewById(R.id.back);
         nextDayForecast = findViewById(R.id.nextDayForecast);
         enterCity = this.getString(R.string.enter_city);
         checkWeather_s = this.getString(R.string.check_weather);
         weatherNotFound = this.getString(R.string.weather_not_found);
         yourLocation = this.getString(R.string.your_location);
         nextDay = this.getString(R.string.next_days);
+        appname = this.getString(R.string.app_name);
         myToolbar= findViewById(R.id.main_toolbar);
     }
 
 
 
     public void ToastMessage(){
-            Toast.makeText(getApplicationContext(), weatherNotFound, 10).show();
-            textView.setText("");
-            done=false;
+        Toast.makeText(getApplicationContext(), weatherNotFound, 10).show();
+        textView.setText("");
+        done=false;
     }
 
     public void SetLocation(View view) {
@@ -246,13 +251,13 @@ public class MainActivity extends AppCompatActivity {
             geo = true;
             message = yourLocation + "\r\n";
             getWeatherFromLocation(String.valueOf(userLocation.latitude), String.valueOf(userLocation.longitude));
-            } catch (Exception e) {
+        } catch (Exception e) {
             geo=false;
             e.printStackTrace();
             ToastMessage();
         }
-            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); //makes keyboard disappear
-            mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); //makes keyboard disappear
+        mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
     public void Location(){
@@ -297,19 +302,40 @@ public class MainActivity extends AppCompatActivity {
             city=editText.getText().toString();
             getWeatherFromName(city);
         } catch (Exception e) {
-                done=false;
-                e.printStackTrace();
-                ToastMessage();
+            done=false;
+            e.printStackTrace();
+            ToastMessage();
 
         }
 
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); //makes keyboard disappear
         mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 
+    }
+
+    private void setLocal(String lang){
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        editor.putString("language", lang);
+        editor.commit();
+    }
+
+    public void loadPreferences(){
+        try {
+            pref = PreferenceManager.getDefaultSharedPreferences(this);
+            lang = pref.getString("language", null);
+            Log.i("language", pref.getString("language", null));
+            //LocaleHelper.setLocale(this, lang);
+            setLocal(lang);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-
-
+    }
 
     public void goToFavorite(View view){
 
@@ -318,16 +344,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void goToSettings(View view){
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
     public void goToViewPager(View view) {
         if(!geo)
-        Check(view);
+            Check(view);
 
-            if(done==true) {
-                Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
-                startActivity(intent);
-                done = false;
-            }
+        if(done==true) {
+            Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
+            startActivity(intent);
+            done = false;
         }
+    }
 
     public void getInt() {
         i = getIntent();
@@ -337,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setTempButton(){
+    /*public void setTempButton(){
         if(pref.getString("temperature", null) == null){
             editor.putString("temperature", "F");
             editor.putString("units", "imperial");
@@ -399,22 +430,22 @@ public class MainActivity extends AppCompatActivity {
             language = "pl";
             savePreferences("language", "pl");
         }
-    }
+    }*/
 
-    private void savePreferences(String key, String value){
+    /*private void savePreferences(String key, String value){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.commit();
-    }
+    }*/
 
     public void getWeatherFromLocation(String lat, String longi) {
 
         if (geo) {
 
             WeatherServiceLocationToday service = ServiceGenerator.createService(WeatherServiceLocationToday.class);
-            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, language, units, AppId);
+            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, language, SettingsActivity.getUnits(), AppId);
             call.enqueue(new Callback<WeatherResponseToday>() {
                 @Override
                 public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
@@ -447,44 +478,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-        public void getWeatherFromName (final String City) {
+    public void getWeatherFromName (final String City) {
 
-                if (City.equals(null)) {
-                    ToastMessage();
-                } else {
+        if (City.equals(null)) {
+            ToastMessage();
+        } else {
 
-                    WeatherServiceNameToday service = ServiceGenerator.createService(WeatherServiceNameToday.class);
-                    Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromName(City, language, units, AppId);
-                    call.enqueue(new Callback<WeatherResponseToday>() {
-                        @Override
-                        public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
-                            try {
-                                WeatherResponseToday weatherResponseToday = response.body();
-                                Log.i("server Response", response.body().toString());
-                                String t = String.valueOf(weatherResponseToday.main.temp);
-                                ArrayList<WeatherToday> weatherList = response.body().getWeather();
+            WeatherServiceNameToday service = ServiceGenerator.createService(WeatherServiceNameToday.class);
+            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromName(City, language, SettingsActivity.getUnits(), AppId);
+            call.enqueue(new Callback<WeatherResponseToday>() {
+                @Override
+                public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
+                    try {
+                        WeatherResponseToday weatherResponseToday = response.body();
+                        Log.i("server Response", response.body().toString());
+                        String t = String.valueOf(weatherResponseToday.main.temp);
+                        ArrayList<WeatherToday> weatherList = response.body().getWeather();
 
-                                Log.i("weatherList:", weatherList.toString());
+                        Log.i("weatherList:", weatherList.toString());
 
-                                message = City + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
-                                textView.setText(message);
-                                city=editText.getText().toString();
-                                done=true;
+                        message = City + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
+                        textView.setText(message);
+                        city=editText.getText().toString();
+                        done=true;
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                ToastMessage();
-                                done=false;
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<WeatherResponseToday> call, Throwable t) {
-                            Log.i("nice", t.getMessage());
-                        }
-                    });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ToastMessage();
+                        done=false;
                     }
                 }
+
+                @Override
+                public void onFailure(Call<WeatherResponseToday> call, Throwable t) {
+                    Log.i("nice", t.getMessage());
+                }
+            });
+        }
+    }
 
 
     @Override
@@ -492,9 +523,9 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
 
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, locationListener);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, locationListener);
             }
         }
     }
@@ -529,18 +560,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.settings:
+                goToSettings(view);
+                break;
+            case R.id.favorite:
+                goToFavorite(view);
+                break;
+            default:
+                Toast.makeText(this, "error", 10).show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadPreferences();
         setContentView(R.layout.activity_main);
         FindViews();
+        myToolbar.setTitle(appname);
+        setSupportActionBar(myToolbar);
         Location();
         getInt();
         pref = getSharedPreferences("MyPref", 0);
         editor = pref.edit();
-        loadLocale();
-        setLangButton();
-        setTempButton();
+        /*loadLocale();*/
+        /*setLangButton();
+        setTempButton();*/
         editText.setText(getCity());
         if(!editText.getText().toString().equals("")){
             Check(view);
