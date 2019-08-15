@@ -43,11 +43,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pref = getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
         loadPreferences();
         setContentView(R.layout.activity_settings);
         findViews(view);
-        pref = getSharedPreferences("MyPref", 0);
-        editor = pref.edit();
         setLangButton();
         setTempButton();
         celsiusCheckBox.setText((char) 0x00B0 + "C");
@@ -67,6 +67,7 @@ public class SettingsActivity extends AppCompatActivity {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
             lang = pref.getString("language", null);
             Log.i("language", pref.getString("language", null));
+            Log.i("units", pref.getString("units", null));
             //LocaleHelper.setLocale(this, lang);
             setLocal(lang);
 
@@ -141,9 +142,9 @@ public class SettingsActivity extends AppCompatActivity {
         editor.putString("language", "en");
         editor.commit();
         savePreferences("language", "en");
-        /*recreate();
-        deleteCache(this);*/
-        //setLangButton();
+        recreate();
+        deleteCache(this);
+        setLangButton();
 
     }
 
@@ -160,9 +161,9 @@ public class SettingsActivity extends AppCompatActivity {
         editor.commit();
         savePreferences("language", "pl");
         pref.getString("language", null);
-        /*recreate();
-        deleteCache(this);*/
-        //setLangButton();
+        recreate();
+        deleteCache(this);
+        setLangButton();
 
     }
     private void savePreferences(String key, String value){
@@ -183,19 +184,19 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void setTempButton(){
-        if(pref.getString("temperature", null) == null){
+        if(pref.getString("temperature", null) == null || pref.getString("units", null) == null){
             editor.putString("temperature", "F");
             editor.putString("units", "imperial");
             editor.commit();
             savePreferences("temperature", "F");
+            savePreferences("units", "imperial");
         }
-        if (pref.getString("temperature", null).equals("C")){
+        if (pref.getString("temperature", null).equals("C") || pref.getString("units", null).equals("metric")){
             units="metric";
             celsiusCheckBox.setChecked(true);
             celsiusCheckBox.setEnabled(false);
             fahrenheitCheckBox.setChecked(false);
             fahrenheitCheckBox.setEnabled(true);
-            units="metric";
 
         }else{
             units="imperial";
@@ -203,7 +204,6 @@ public class SettingsActivity extends AppCompatActivity {
             fahrenheitCheckBox.setEnabled(false);
             celsiusCheckBox.setChecked(false);
             celsiusCheckBox.setEnabled(true);
-            units = "imperial";
 
         }
     }

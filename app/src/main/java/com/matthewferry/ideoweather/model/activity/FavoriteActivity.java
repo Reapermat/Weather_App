@@ -57,6 +57,8 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
 
         super.onCreate(savedInstanceState);
         Realm.init(this);
+        pref = getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
         loadPreferences();
         setContentView(R.layout.activity_favorite);
         realm = Realm.getDefaultInstance();
@@ -164,6 +166,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         try {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
             lang = pref.getString("language", null);
+            Log.i("units", pref.getString("units", null));
             Log.i("language", lang);
             //LocaleHelper.setLocale(this, lang);
             setLocal(lang);
@@ -186,8 +189,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         swipeToDelete = getString(R.string.swipe_to_delete);
         backTo = getString(R.string.back_to_main);
         fav = getString(R.string.favorite);
-        pref = getSharedPreferences("MyPref", 0);
-        editor = pref.edit();
         toolbar=(Toolbar) findViewById(R.id.my_toolbar);
     }
 

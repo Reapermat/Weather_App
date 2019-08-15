@@ -102,6 +102,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         try {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             Log.i("language", sharedPreferences.getString("language", null));
+            Log.i("units", sharedPreferences.getString("units", null));
             //LocaleHelper.setLocale(this, lang);
             setLocal(sharedPreferences.getString("language", null));
 
@@ -129,7 +130,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
 
             WeatherServiceNameNext service = ServiceGenerator.createService(WeatherServiceNameNext.class);
-            Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(City, SettingsActivity.getLanguage(), SettingsActivity.getUnits(), AppId);
+            Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(City, SettingsActivity.getLanguage(), sharedPreferences.getString("units", null), AppId);
             call.enqueue(new Callback<WeatherResponseNextDays>() {
                 @Override
                 public void onResponse(Call<WeatherResponseNextDays> call, Response<WeatherResponseNextDays> response) {

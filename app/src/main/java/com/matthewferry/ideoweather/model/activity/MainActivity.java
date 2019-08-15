@@ -319,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
         Configuration config = new Configuration();
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        Log.i("lang=", lang);
         editor.putString("language", lang);
         editor.commit();
     }
@@ -328,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
             pref = PreferenceManager.getDefaultSharedPreferences(this);
             lang = pref.getString("language", null);
             Log.i("language", pref.getString("language", null));
+            Log.i("units", pref.getString("units", null));
             //LocaleHelper.setLocale(this, lang);
             setLocal(lang);
 
@@ -368,29 +370,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*public void setTempButton(){
-        if(pref.getString("temperature", null) == null){
+    public void setTempButton(){
+        if(pref.getString("temperature", null) == null || pref.getString("units", null) == null){
             editor.putString("temperature", "F");
             editor.putString("units", "imperial");
             editor.commit();
             savePreferences("temperature", "F");
+            savePreferences("units", "imperial");
         }
-        if (pref.getString("temperature", null).equals("C")){
-            celsius.setClickable(false);
-            celsius.setAlpha(1);
-            temp='C';
-            fahrenheit.setClickable(true);
-            fahrenheit.setAlpha(0.5f);
+        if (pref.getString("temperature", null).equals("C") || pref.getString("units", null).equals("metric")){
             units="metric";
 
         }else{
-            fahrenheit.setClickable(false);
-            fahrenheit.setAlpha(1);
-            celsius.setAlpha(0.5f);
-            celsius.setClickable(true);
-            temp = 'F';
             units = "imperial";
-
         }
     }
 
@@ -399,53 +391,41 @@ public class MainActivity extends AppCompatActivity {
         if(pref.getString("language", null) == null ) {
             editor.putString("language", "en");
             editor.commit();
-            check.setText(checkWeather_s);
+            /*check.setText(checkWeather_s);
             nextDayForecast.setText(nextDay);
-            editText.setHint(enterCity);
-            english.setClickable(false);
-            english.setAlpha(1);
-            polish.setAlpha(0.5f);
-            polish.setClickable(true);
+            editText.setHint(enterCity);*/
             language = "en";
             savePreferences("language", "en");
         }
         if(pref.getString("language",null).equals("en") ){
-            check.setText(checkWeather_s);
+            /*check.setText(checkWeather_s);
             nextDayForecast.setText(nextDay);
-            editText.setHint(enterCity);
-            english.setClickable(false);
-            english.setAlpha(1);
-            polish.setAlpha(0.5f);
-            polish.setClickable(true);
+            editText.setHint(enterCity);*/
             language = "en";
             savePreferences("language", "en");
         }else if(pref.getString("language",null).equals("pl")){
-            check.setText(checkWeather_s);
+            /*check.setText(checkWeather_s);
             nextDayForecast.setText(nextDay);
-            editText.setHint(enterCity);
-            polish.setClickable(false);
-            polish.setAlpha(1);
-            english.setAlpha(0.5f);
-            english.setClickable(true);
+            editText.setHint(enterCity);*/
             language = "pl";
             savePreferences("language", "pl");
         }
-    }*/
+    }
 
-    /*private void savePreferences(String key, String value){
+    private void savePreferences(String key, String value){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.commit();
-    }*/
+    }
 
     public void getWeatherFromLocation(String lat, String longi) {
 
         if (geo) {
 
             WeatherServiceLocationToday service = ServiceGenerator.createService(WeatherServiceLocationToday.class);
-            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, language, SettingsActivity.getUnits(), AppId);
+            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, SettingsActivity.getLanguage(), pref.getString("units", null), AppId);
             call.enqueue(new Callback<WeatherResponseToday>() {
                 @Override
                 public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
@@ -485,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
 
             WeatherServiceNameToday service = ServiceGenerator.createService(WeatherServiceNameToday.class);
-            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromName(City, language, SettingsActivity.getUnits(), AppId);
+            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromName(City, SettingsActivity.getLanguage(), pref.getString("units", null), AppId);
             call.enqueue(new Callback<WeatherResponseToday>() {
                 @Override
                 public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
@@ -590,18 +570,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        pref = getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
+        setLangButton();
+        setTempButton();
         loadPreferences();
         setContentView(R.layout.activity_main);
         FindViews();
         myToolbar.setTitle(appname);
         setSupportActionBar(myToolbar);
         Location();
+        check.setText(checkWeather_s);
+        editText.setHint(enterCity);
+        nextDayForecast.setText(nextDay);
         getInt();
-        pref = getSharedPreferences("MyPref", 0);
-        editor = pref.edit();
         /*loadLocale();*/
-        /*setLangButton();
-        setTempButton();*/
         editText.setText(getCity());
         if(!editText.getText().toString().equals("")){
             Check(view);
