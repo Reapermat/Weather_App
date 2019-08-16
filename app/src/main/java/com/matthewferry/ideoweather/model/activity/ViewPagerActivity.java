@@ -103,7 +103,6 @@ public class ViewPagerActivity extends AppCompatActivity {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             Log.i("language", sharedPreferences.getString("language", null));
             Log.i("units", sharedPreferences.getString("units", null));
-            //LocaleHelper.setLocale(this, lang);
             setLocal(sharedPreferences.getString("language", null));
 
         }catch (Exception e){
@@ -121,16 +120,12 @@ public class ViewPagerActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    /*public void goToMain(View view){
-        Intent intent = new Intent(ViewPagerActivity.this, MainActivity.class);
-        startActivity(intent);
-    }*/
 
     public void getLocationFromName (final String City, final int i) {
 
 
             WeatherServiceNameNext service = ServiceGenerator.createService(WeatherServiceNameNext.class);
-            Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(City, SettingsActivity.getLanguage(), sharedPreferences.getString("units", null), AppId);
+            Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(City, sharedPreferences.getString("language", null), sharedPreferences.getString("units", null), AppId);
             call.enqueue(new Callback<WeatherResponseNextDays>() {
                 @Override
                 public void onResponse(Call<WeatherResponseNextDays> call, Response<WeatherResponseNextDays> response) {

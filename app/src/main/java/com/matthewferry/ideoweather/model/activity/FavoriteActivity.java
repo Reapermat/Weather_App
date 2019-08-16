@@ -40,8 +40,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
     FloatingActionButton floatingActionButton;
     TextView cities;
     EditText dialogCity;
-    Button english;
-    Button polish;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     String lang;
@@ -49,7 +47,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
     String canceled;
     String swipeToDelete;
     String fav;
-    boolean ready = true;
     Toolbar toolbar;
 
     @Override
@@ -65,7 +62,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         findViews();
         final DialogFragment addCityDialog = new NewCityDialog();
         SetUpRecyclerView();
-       // backToMain.setText(backTo);
         toolbar.setTitle(fav);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -86,6 +82,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
                         Intent intentText = new Intent(FavoriteActivity.this, MainActivity.class);
                         intentText.putExtra("City", city);
                         startActivity(intentText);
+                        MainActivity.onAddCitySearch(city);
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -97,17 +94,11 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
 
     }
 
-   /* public void backToMain(View view){
-        ready=false;
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }*/
 
     public void onAddCity(String city) {
         SecureRandom secureRandom = new SecureRandom();
         int cityID = secureRandom.nextInt(10000);
         DataHelper.newCity(realm, cityID, city);
-
     }
 
     @Override
@@ -168,7 +159,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
             lang = pref.getString("language", null);
             Log.i("units", pref.getString("units", null));
             Log.i("language", lang);
-            //LocaleHelper.setLocale(this, lang);
             setLocal(lang);
 
         }catch (Exception e){
@@ -178,18 +168,15 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
 
     private void findViews(){
         recyclerView = findViewById(R.id.myRecyclerView);
-        //backToMain = findViewById(R.id.back);
         cities = findViewById(R.id.cities);
         floatingActionButton = findViewById(R.id.floatingActionButton);
         dialogCity = findViewById(R.id.dialogCity);
-        /*english = findViewById(R.id.englishButton);
-        polish = findViewById(R.id.polishButton);*/
         backTo = getString(R.string.back_to_main);
         canceled = getString(R.string.canceled);
         swipeToDelete = getString(R.string.swipe_to_delete);
         backTo = getString(R.string.back_to_main);
         fav = getString(R.string.favorite);
-        toolbar=(Toolbar) findViewById(R.id.my_toolbar);
+        toolbar=findViewById(R.id.my_toolbar);
     }
 
     }

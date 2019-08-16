@@ -29,18 +29,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.matthewferry.ideoweather.model.helper.LocaleHelper;
 import com.matthewferry.ideoweather.R;
+import com.matthewferry.ideoweather.model.helper.DataHelper;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceLocationToday;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameToday;
+import com.matthewferry.ideoweather.model.realm.CitySearchDB;
 import com.matthewferry.ideoweather.model.serviceGenerator.ServiceGenerator;
 import com.matthewferry.ideoweather.model.util.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.util.WeatherToday;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,22 +54,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    static Realm realm;
     EditText editText;
     TextView textView;
     private static String units = "imperial";
     private static String language ="en";
     private static String city;
     String message = "";
-    Button celsius;
-    Button fahrenheit;
-    Button english;
-    Button polish;
     Button check;
     Button nextDayForecast;
     Intent i;
-    ImageButton favorite;
     ImageButton setLocation;
-    char temp = 'F';
     LocationManager locationManager;
     LocationListener locationListener;
     LatLng userLocation;
@@ -79,128 +78,12 @@ public class MainActivity extends AppCompatActivity {
     String yourLocation;
     String lang;
     String nextDay;
-    String appname;
+    String appName;
     View view;
-    public String BaseUrl = "http://api.openweathermap.org/";
     public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
     Toolbar myToolbar;
 
 
-
-
-    /*public void ToCelsius(View view){
-
-        units="metric";
-        celsius.setClickable(false);
-        celsius.setAlpha(1);
-        fahrenheit.setClickable(true);
-        fahrenheit.setAlpha(0.5f);
-        temp = 'C';
-        if(!textView.getText().toString().equals("")) {
-            if (!geo) {
-                check.callOnClick();
-            } else {
-                setLocation.callOnClick();
-            }
-        }
-        editor.putString("temperature", "C");
-        editor.putString("units", "metric");
-        editor.commit();
-        savePreferences("temperature", "C");
-    }
-
-    public void ToFahrenheit(View view){
-
-        units="imperial";
-        fahrenheit.setClickable(false);
-        fahrenheit.setAlpha(1);
-        celsius.setAlpha(0.5f);
-        celsius.setClickable(true);
-        temp = 'F';
-        if(!textView.getText().toString().equals("")) {
-            if (!geo) {
-                check.callOnClick();
-            } else {
-                setLocation.callOnClick();
-            }
-        }
-        editor.putString("temperature", "F");
-        editor.putString("units", "imperial");
-        editor.commit();
-        savePreferences("temperature", "F");
-
-    }
-
-    public void ToEnglish(View view){
-
-        LocaleHelper.setLocale(this, "en");
-        check.setText(checkWeather_s);
-        editText.setHint(enterCity);
-        nextDayForecast.setText(nextDay);
-        english.setClickable(false);
-        english.setAlpha(1);
-        polish.setAlpha(0.5f);
-        polish.setClickable(true);
-        language = "en";
-        editor.putString("language", "en");
-        editor.commit();
-        savePreferences("language", "en");
-        recreate();
-        deleteCache(this);
-        setLangButton();
-        try {
-            editText.setText(getCity());
-            Log.i("city", getCity());
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        if(!textView.getText().toString().equals("")) {
-            if (!geo) {
-                check.callOnClick();
-            } else {
-                setLocation.callOnClick();
-            }
-        }
-
-    }
-
-    public void ToPolish(View view){
-
-        LocaleHelper.setLocale(this, "pl");
-        check.setText(checkWeather_s);
-        editText.setHint(enterCity);
-        nextDayForecast.setText(nextDay);
-        polish.setClickable(false);
-        polish.setAlpha(1);
-        english.setAlpha(0.5f);
-        english.setClickable(true);
-        language = "pl";
-        editor.putString("language", "pl");
-        editor.commit();
-        savePreferences("language", "pl");
-        recreate();
-        deleteCache(this);
-        setLangButton();
-        try {
-            editText.setText(getCity());
-            Log.i("city", getCity());
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        if(!textView.getText().toString().equals("")) {
-            if (!geo) {
-                check.callOnClick();
-            } else {
-                setLocation.callOnClick();
-            }
-        }
-
-    }*/
-
-    /*public void loadLocale(){
-        lang = pref.getString("language", "");
-        LocaleHelper.setLocale(this, lang);
-    }*/
 
 
     public static String getLanguage(){
@@ -217,20 +100,15 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.editText);
         textView = findViewById(R.id.textView);
-        /*celsius = findViewById(R.id.celsiusButton);
-        fahrenheit = findViewById(R.id.fahrenheitButton);
-        english = findViewById(R.id.englishButton);
-        polish = findViewById(R.id.polishButton);*/
         check = findViewById(R.id.button);
         setLocation = findViewById(R.id.setLocation);
-        //favorite = findViewById(R.id.back);
         nextDayForecast = findViewById(R.id.nextDayForecast);
         enterCity = this.getString(R.string.enter_city);
         checkWeather_s = this.getString(R.string.check_weather);
         weatherNotFound = this.getString(R.string.weather_not_found);
         yourLocation = this.getString(R.string.your_location);
         nextDay = this.getString(R.string.next_days);
-        appname = this.getString(R.string.app_name);
+        appName = this.getString(R.string.app_name);
         myToolbar= findViewById(R.id.main_toolbar);
     }
 
@@ -305,13 +183,19 @@ public class MainActivity extends AppCompatActivity {
             done=false;
             e.printStackTrace();
             ToastMessage();
-
         }
 
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); //makes keyboard disappear
         mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 
     }
+
+    public static void onAddCitySearch(String city) {
+        SecureRandom secureRandom = new SecureRandom();
+        int cityID = secureRandom.nextInt(10000);
+        DataHelper.newCitySearch(realm, cityID, city);
+    }
+
 
     private void setLocal(String lang){
         Locale locale = new Locale(lang);
@@ -330,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
             lang = pref.getString("language", null);
             Log.i("language", pref.getString("language", null));
             Log.i("units", pref.getString("units", null));
-            //LocaleHelper.setLocale(this, lang);
             setLocal(lang);
 
 
@@ -391,22 +274,13 @@ public class MainActivity extends AppCompatActivity {
         if(pref.getString("language", null) == null ) {
             editor.putString("language", "en");
             editor.commit();
-            /*check.setText(checkWeather_s);
-            nextDayForecast.setText(nextDay);
-            editText.setHint(enterCity);*/
             language = "en";
             savePreferences("language", "en");
         }
         if(pref.getString("language",null).equals("en") ){
-            /*check.setText(checkWeather_s);
-            nextDayForecast.setText(nextDay);
-            editText.setHint(enterCity);*/
             language = "en";
             savePreferences("language", "en");
         }else if(pref.getString("language",null).equals("pl")){
-            /*check.setText(checkWeather_s);
-            nextDayForecast.setText(nextDay);
-            editText.setHint(enterCity);*/
             language = "pl";
             savePreferences("language", "pl");
         }
@@ -425,13 +299,12 @@ public class MainActivity extends AppCompatActivity {
         if (geo) {
 
             WeatherServiceLocationToday service = ServiceGenerator.createService(WeatherServiceLocationToday.class);
-            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, SettingsActivity.getLanguage(), pref.getString("units", null), AppId);
+            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromLocation(lat, longi, pref.getString("language", null ), pref.getString("units", null), AppId);
             call.enqueue(new Callback<WeatherResponseToday>() {
                 @Override
                 public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
                     try {
                         WeatherResponseToday weatherResponseToday = response.body();
-                        //Log.i("server Response", response.body().toString());
                         String name = weatherResponseToday.name;
                         String t = String.valueOf(weatherResponseToday.main.temp);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
@@ -443,6 +316,11 @@ public class MainActivity extends AppCompatActivity {
                         textView.setText(message);
                         done = true;
                         geo=false;
+                        onAddCitySearch(city);
+                        if(realm.where(CitySearchDB.class).count()>1){
+                            DataHelper.deleteCitySearch(realm);
+                        }
+                        Log.i("realm:", realm.where(CitySearchDB.class).findAll().toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                         ToastMessage();
@@ -465,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
 
             WeatherServiceNameToday service = ServiceGenerator.createService(WeatherServiceNameToday.class);
-            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromName(City, SettingsActivity.getLanguage(), pref.getString("units", null), AppId);
+            Call<WeatherResponseToday> call = service.getCurrentWeatherDataFromName(City, pref.getString("language", null), pref.getString("units", null), AppId);
             call.enqueue(new Callback<WeatherResponseToday>() {
                 @Override
                 public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
@@ -474,13 +352,16 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("server Response", response.body().toString());
                         String t = String.valueOf(weatherResponseToday.main.temp);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
-
                         Log.i("weatherList:", weatherList.toString());
-
                         message = City + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
                         textView.setText(message);
                         city=editText.getText().toString();
                         done=true;
+                        onAddCitySearch(city);
+                        if(realm.where(CitySearchDB.class).count()>1){
+                            DataHelper.deleteCitySearch(realm);
+                        }
+                        Log.i("realm:", realm.where(CitySearchDB.class).findAll().toString());
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -510,12 +391,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.onAttach(newBase, "en"));
-    }
-
-
     public static void deleteCache(Context context) {
         try {
             File dir = context.getCacheDir();
@@ -539,9 +414,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -570,26 +442,37 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Realm.init(this);
+        RealmConfiguration realmConfiguration = new RealmConfiguration
+                .Builder()
+                .deleteRealmIfMigrationNeeded()
+                .name(Realm.DEFAULT_REALM_NAME)
+                .schemaVersion(1)
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
         pref = getSharedPreferences("MyPref", 0);
         editor = pref.edit();
         setLangButton();
         setTempButton();
         loadPreferences();
         setContentView(R.layout.activity_main);
+        realm = Realm.getDefaultInstance();
         FindViews();
-        myToolbar.setTitle(appname);
+        myToolbar.setTitle(appName);
         setSupportActionBar(myToolbar);
         Location();
         check.setText(checkWeather_s);
         editText.setHint(enterCity);
         nextDayForecast.setText(nextDay);
         getInt();
-        /*loadLocale();*/
-        editText.setText(getCity());
+        Log.i("realm:", String.valueOf(realm.where(CitySearchDB.class).count()));
+        if(realm.where(CitySearchDB.class).count()!=0) {
+            editText.setText(realm.where(CitySearchDB.class).findAll().last().getCity());
+        }
         if(!editText.getText().toString().equals("")){
             Check(view);
         }
+
     }
 
 }

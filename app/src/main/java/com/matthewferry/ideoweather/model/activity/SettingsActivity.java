@@ -12,7 +12,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.model.helper.LocaleHelper;
 
 import java.util.Locale;
 
@@ -68,7 +67,6 @@ public class SettingsActivity extends AppCompatActivity {
             lang = pref.getString("language", null);
             Log.i("language", pref.getString("language", null));
             Log.i("units", pref.getString("units", null));
-            //LocaleHelper.setLocale(this, lang);
             setLocal(lang);
 
         }catch (Exception e){
@@ -125,12 +123,9 @@ public class SettingsActivity extends AppCompatActivity {
         editor.commit();
         savePreferences("temperature", "F");
         savePreferences("units", "imperial");
-
     }
 
     public void toEnglish(View view){
-
-        //LocaleHelper.setLocale(this, "en");
 
         setLocal("en");
         englishCheckBox.setChecked(true);
@@ -145,12 +140,10 @@ public class SettingsActivity extends AppCompatActivity {
         recreate();
         deleteCache(this);
         setLangButton();
-
     }
 
     public void toPolish(View view){
 
-        //LocaleHelper.setLocale(this, "pl");
         englishCheckBox.setChecked(false);
         englishCheckBox.setEnabled(true);
         polishCheckBox.setChecked(true);

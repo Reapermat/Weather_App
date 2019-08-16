@@ -7,10 +7,13 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.util.Locale;
 
 public class LocaleHelper {
+
+
 
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
 
@@ -37,6 +40,20 @@ public class LocaleHelper {
 
         return updateResourcesLegacy(context, language);
     }
+
+    /*public static void loadPreferences(){
+        try {
+            pref = PreferenceManager.getDefaultSharedPreferences(this);
+            lang = pref.getString("language", null);
+            Log.i("units", pref.getString("units", null));
+            Log.i("language", lang);
+            //setLocal(lang);
+            LocaleHelper.setLocale(this, lang);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }*/
 
     private static String getPersistedData(Context context, String defaultLanguage) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -80,4 +97,6 @@ public class LocaleHelper {
 
         return context;
     }
+
+
 }
