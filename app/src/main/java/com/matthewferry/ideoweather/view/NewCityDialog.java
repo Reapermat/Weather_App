@@ -21,7 +21,6 @@ public class NewCityDialog extends DialogFragment {
 
     NewCityListener mListener;
     String city;
-    String language = MainActivity.getLanguage();
     String enterNewCity;
     String addCity;
     String addValidCity;

@@ -17,4 +17,5 @@
     <string name="settings_name">Ustawienia</string>
     <string name="language">Język: </string>
     <string name="units">Jednostki: </string>
+    <string name="last_search">Ostatnie wyszukanie:</string>
 </resources>

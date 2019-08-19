@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,7 +81,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
                         Intent intentText = new Intent(FavoriteActivity.this, MainActivity.class);
                         intentText.putExtra("City", city);
                         startActivity(intentText);
-                        MainActivity.onAddCitySearch(city);
+                       // MainActivity.onAddCitySearch(city);
                     }
 
                     @Override public void onLongItemClick(View view, int position) {

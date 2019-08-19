@@ -39,7 +39,6 @@ public class ViewPagerActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String weatherNotFound;
     String yourLocation;
-    public String BaseUrl = "http://api.openweathermap.org/";
     public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
     String message;
     String wait;
