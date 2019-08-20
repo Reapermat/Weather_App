@@ -39,7 +39,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String weatherNotFound;
     String yourLocation;
-    public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
+    public String AppId = "5817ad2133c8314219db601b74a40a2b";
     String message;
     String wait;
     ArrayList<String> weatherList;

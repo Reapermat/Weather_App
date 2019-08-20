@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#63755A5A"
+    android:id="@+id/mainActivity"
     tools:context=".model.activity.MainActivity">
 
     <android.support.v7.widget.Toolbar
@@ -61,7 +62,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editText"
         app:layout_constraintVertical_bias="0.041" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/textView"
         android:layout_width="333dp"
         android:layout_height="286dp"
@@ -79,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.854" />
+        app:layout_constraintVertical_bias="0.854" />-->
 
 
     <ImageButton

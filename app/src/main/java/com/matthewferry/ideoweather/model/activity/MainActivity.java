@@ -13,6 +13,9 @@ import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,10 +43,12 @@ import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameNext;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameToday;
 import com.matthewferry.ideoweather.model.realm.CitySearchDB;
 import com.matthewferry.ideoweather.model.serviceGenerator.ServiceGenerator;
+import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
 import com.matthewferry.ideoweather.model.util.List;
 import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
 import com.matthewferry.ideoweather.model.util.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.util.WeatherToday;
+import com.matthewferry.ideoweather.view.WeatherListFragment;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -75,8 +80,8 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
     private LatLng userLocation;
     private boolean geo = false;
     private boolean done;
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
+    public SharedPreferences pref;
+    public SharedPreferences.Editor editor;
     private String checkWeather_s;
     private String enterCity;
     private String weatherNotFound;
@@ -88,13 +93,14 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
     View view;
     public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
     private Toolbar myToolbar;
-    private CountDownTimer countDownTimer;
+    /*private CountDownTimer countDownTimer;
     private boolean timerRunning;
     private long timeLeftInMillis;
     private long endTime;
-    private static final long START_TIME_IN_MILLIS = 600000;
+    private static final long START_TIME_IN_MILLIS = 600000;*/
     RecyclerViewWeatherAdapter adapter;
     ArrayList<String> weatherData = new ArrayList<>();
+
 
 
 
@@ -111,7 +117,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
     public void FindViews(){
 
         editText = findViewById(R.id.editText);
-        textView = findViewById(R.id.textView);
+       // textView = findViewById(R.id.textView);
         check = findViewById(R.id.button);
         setLocation = findViewById(R.id.setLocation);
         nextDayForecast = findViewById(R.id.nextDayForecast);
@@ -129,7 +135,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
 
     public void ToastMessage(){
         Toast.makeText(getApplicationContext(), weatherNotFound, 10).show();
-        textView.setText("");
+        //textView.setText("");
         done=false;
     }
 
@@ -193,9 +199,16 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
             geo = false;
             city=editText.getText().toString();
             getWeatherFromName(city);
-            //startTimer();
-            //recyclerView();
-            Log.i("timer", String.valueOf(timerRunning));
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentById(R.id.recyclerWeather);
+            if(fragment == null) {
+                fragment = new WeatherListFragment();
+            }
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.mainActivity, fragment);
+            fragmentTransaction.commit();
+
+            //Log.i("createWeatherList", GetWeatherForecast.getMessage());
 
         } catch (Exception e) {
             done=false;
@@ -288,7 +301,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
 
     public void setLangButton(){
 
-        if(pref.getString("language", null) == null ) {
+        if(pref.getString("language", null) == null) {
             editor.putString("language", "en");
             editor.commit();
             language = "en";
@@ -329,7 +342,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                         editText.setText(getCity());
                         Log.i("name", getCity());
                         message =  name + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
-                        textView.setText(yourLocation + " " +message);
+                        //textView.setText(yourLocation + " " +message);
                         done = true;
                         geo=false;
                         onAddCitySearch(message);
@@ -370,7 +383,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         Log.i("weatherList:", weatherList.toString());
                         message = City + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
-                        textView.setText(message);
+                        //textView.setText(message);
                         city=editText.getText().toString();
                         done=true;
                         onAddCitySearch(message);
@@ -378,7 +391,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                             DataHelper.deleteCitySearch(realm);
                         }
                         Log.i("realm:", realm.where(CitySearchDB.class).findAll().toString());
-
+                        Log.i("message", message);
                     } catch (Exception e) {
                         e.printStackTrace();
                         ToastMessage();
@@ -593,11 +606,12 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
         super.onCreate(savedInstanceState);
         Realm.init(this);
         realmConfig();
-        pref = getSharedPreferences("MyPref", 0);
+        pref = getSharedPreferences("MyPref",MODE_PRIVATE);
         editor = pref.edit();
         setLangButton();
         setTempButton();
         loadPreferences();
+
         setContentView(R.layout.activity_main);
         //recyclerView();
         realm = Realm.getDefaultInstance();
@@ -611,10 +625,11 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
         getInt();
 
         //if(timerRunning) {
-            if (realm.where(CitySearchDB.class).count() != 0) {
+          /*  if (realm.where(CitySearchDB.class).count() != 0) {
                 textView.setText(lastSearch + "\r\n" + realm.where(CitySearchDB.class).findAll().last().getCity());
-            }
+            }*/
        // }
+
         editText.setText(getCity());
         if(!editText.getText().toString().equals("")){
             Check(view);

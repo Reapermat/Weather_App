@@ -1,66 +1,70 @@
 package com.matthewferry.ideoweather.model.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
+import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
 
 import java.util.List;
 
-public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerViewWeatherAdapter.ViewHolder> {
+public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter {
 
-    private List<String> mData;
-    private LayoutInflater mInflater;
+
     private ItemClickListener mClickListener;
+    Context context;
 
-    // data is passed into the constructor
-    public RecyclerViewWeatherAdapter(Context context, List<String> data) {
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
-    }
 
-    // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.weather_row, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.weather_row, viewGroup, false);
         return new ViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String weather = mData.get(position);
-        holder.myTextView.setText(weather);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+        ((ViewHolder)viewHolder).bindView(i);
     }
 
-    // total number of rows
     @Override
     public int getItemCount() {
-        return mData.size();
+        return 3;
     }
 
 
-    // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
 
-        ViewHolder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.weatherTextView);
+            myTextView = itemView.findViewById(R.id.weatherRow);
             itemView.setOnClickListener(this);
+        }
+
+        public void bindView(int position){
+            myTextView.setText(GetWeatherForecast.createWeatherList().get(position));
         }
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            if (mClickListener != null){
+                mClickListener.onItemClick(view, getAdapterPosition());
+            }
+
         }
     }
 
-    // convenience method for getting data at click position
+
+
+   /* // convenience method for getting data at click position
     public String getItem(int id) {
         return mData.get(id);
     }
@@ -68,10 +72,12 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
     // allows clicks events to be caught
     public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
-    }
+    }*/
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
+
+
 }
