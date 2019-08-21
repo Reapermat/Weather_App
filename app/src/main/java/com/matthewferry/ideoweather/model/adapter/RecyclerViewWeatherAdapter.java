@@ -1,8 +1,10 @@
+
 package com.matthewferry.ideoweather.model.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,36 +14,46 @@ import android.widget.Toast;
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter {
+public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerViewWeatherAdapter.ViewHolder> {
 
 
     private ItemClickListener mClickListener;
     Context context;
+    ArrayList<GetWeatherForecast> getWeatherForecasts;
 
+    public RecyclerViewWeatherAdapter(Context context, ArrayList<GetWeatherForecast> getWeatherForecasts) {
+        this.context = context;
+        this.getWeatherForecasts = getWeatherForecasts;
+    }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.weather_row, viewGroup, false);
-        return new ViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.weather_row, viewGroup, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        ((ViewHolder)viewHolder).bindView(i);
+    public void onBindViewHolder(RecyclerViewWeatherAdapter.ViewHolder viewHolder, int i) {
+        viewHolder.myTextView.setText(getWeatherForecasts.get(i).getMessage());
     }
+
+
 
     @Override
     public int getItemCount() {
-        return 3;
+        return getWeatherForecasts.size();
     }
 
 
 
-    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView myTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -49,9 +61,6 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter {
             itemView.setOnClickListener(this);
         }
 
-        public void bindView(int position){
-            myTextView.setText(GetWeatherForecast.createWeatherList().get(position));
-        }
 
         @Override
         public void onClick(View view) {
@@ -63,18 +72,9 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter {
     }
 
 
-
-   /* // convenience method for getting data at click position
-    public String getItem(int id) {
-        return mData.get(id);
+    public RecyclerViewWeatherAdapter(){
     }
 
-    // allows clicks events to be caught
-    public void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }*/
-
-    // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }

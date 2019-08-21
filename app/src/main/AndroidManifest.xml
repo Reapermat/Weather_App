@@ -17,7 +17,8 @@
             android:parentActivityName=".model.activity.MainActivity"></activity>
         <activity
             android:name=".model.activity.ViewPagerActivity"
-            android:parentActivityName=".model.activity.MainActivity" />
+            android:parentActivityName=".model.activity.MainActivity"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name=".model.activity.FavoriteActivity"
             android:parentActivityName=".model.activity.MainActivity" />

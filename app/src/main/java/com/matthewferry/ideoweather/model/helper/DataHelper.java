@@ -29,7 +29,7 @@ public class DataHelper {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                CityDB cityDBItem = realm.where(CityDB.class).equalTo("id", id).findFirst();
+                CityDB cityDBItem = realm.where(CityDB.class).findFirst();
                 if(cityDBItem != null){
                     cityDBItem.deleteFromRealm();
                 }
@@ -51,10 +51,8 @@ public class DataHelper {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                CitySearchDB citySearchDB = realm.where(CitySearchDB.class).findFirst();
-                if(citySearchDB!=null) {
-                    citySearchDB.deleteFromRealm();
-                }
+                    RealmResults citySearchDB = realm.where(CitySearchDB.class).findAll();
+                    citySearchDB.deleteAllFromRealm();
             }
         });
     }
