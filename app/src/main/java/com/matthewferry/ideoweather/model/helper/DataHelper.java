@@ -3,6 +3,7 @@ package com.matthewferry.ideoweather.model.helper;
 
 import android.app.Notification;
 import android.os.Message;
+import android.util.Log;
 
 import com.matthewferry.ideoweather.model.realm.CityDB;
 import com.matthewferry.ideoweather.model.realm.CitySearchDB;
@@ -46,6 +47,7 @@ public class DataHelper {
             citySearchDB.setCity(city);
             realm.commitTransaction();
         }
+        Log.i("result", result.toString());
     }
     public static void deleteCitySearch(Realm realm){
         realm.executeTransactionAsync(new Realm.Transaction() {
@@ -56,6 +58,8 @@ public class DataHelper {
             }
         });
     }
+
+
 
 
 }

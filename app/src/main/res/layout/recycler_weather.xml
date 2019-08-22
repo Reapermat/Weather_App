@@ -7,10 +7,11 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerWeather"
-        android:layout_width="323dp"
-        android:layout_height="396dp"
-        android:layout_marginTop="316dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

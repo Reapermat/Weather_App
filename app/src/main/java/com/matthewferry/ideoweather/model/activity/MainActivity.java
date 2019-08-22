@@ -9,7 +9,6 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,10 +16,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -36,16 +34,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.model.adapter.RecyclerViewWeatherAdapter;
+import com.matthewferry.ideoweather.model.adapter.WeatherViewPagerAdapter;
 import com.matthewferry.ideoweather.model.helper.DataHelper;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceLocationToday;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameNext;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameToday;
 import com.matthewferry.ideoweather.model.realm.CitySearchDB;
 import com.matthewferry.ideoweather.model.serviceGenerator.ServiceGenerator;
-import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
 import com.matthewferry.ideoweather.model.util.List;
-import com.matthewferry.ideoweather.model.util.Main;
 import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
 import com.matthewferry.ideoweather.model.util.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.util.WeatherToday;
@@ -58,6 +54,7 @@ import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -67,7 +64,6 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
 
     static Realm realm;
     private EditText editText;
-    private TextView textView;
     private static String units = "imperial";
     private static String language ="en";
     private static String city;
@@ -98,7 +94,10 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
     private Fragment fragment;
     private FragmentTransaction fragmentTransaction;
     public static ArrayList<String> messages = new ArrayList<>();
-
+    private ViewPager viewPager;
+    public static String message1;
+    private CircleIndicator circleIndicator;
+    public WeatherViewPagerAdapter weatherViewPagerAdapter;
 
     public static String getLanguage(){
         return language;
@@ -125,6 +124,9 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
         appName = this.getString(R.string.app_name);
         lastSearch = this.getString(R.string.last_search);
         myToolbar= findViewById(R.id.main_toolbar);
+        viewPager = findViewById(R.id.mainViewPager);
+        /*circleIndicator = findViewById(R.id.circleMain);
+        circleIndicator.setViewPager(viewPager);*/
     }
 
 
@@ -198,21 +200,14 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                 DataHelper.deleteCitySearch(realm);
             }
             getWeatherFromName(city);
-            try {
-                if (!messages.isEmpty()) {
-                    messages.clear();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            for(int i=6; i<=30; i+=6) {
+            for(int i=6; i<=38; i+=8) {
                 getWeatherFromNameNextDays(city, i);
-                Log.i("messageWeather", messages.toString());
+                Log.i("i", String.valueOf(i));
             }
 
-            /*if(realm.where(CitySearchDB.class).count()==5){
-                fragmentManager();
-            }*/
+            if(realm.where(CitySearchDB.class).count()==5){
+                //fragmentManager();
+            }
 
 
             Log.i("messageWeather",messages.toString());
@@ -276,7 +271,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
         if(!geo)
             check(view);
 
-        if(done==true) {
+        if(done) {
             Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
             startActivity(intent);
             done = false;
@@ -349,11 +344,14 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                         city = name;
                         editText.setText(getCity());
                         Log.i("name", getCity());
-                        message =  name + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
+                        //message =  name + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
                         //textView.setText(yourLocation + " " +message);
-                        for(int i=6; i<=30; i+=6) {
+                        if(realm.where(CitySearchDB.class).count()>4){
+                            DataHelper.deleteCitySearch(realm);
+                        }
+                        for(int i=6; i<=38; i+=8) {
                             getWeatherFromNameNextDays(city, i);
-                            Log.i("messageWeather", messages.toString());
+                            Log.i("i", String.valueOf(i));
                         }
                         done = true;
                         geo=false;
@@ -369,6 +367,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                 @Override
                 public void onFailure(Call<WeatherResponseToday> call, Throwable t) {
                     Log.i("nice", t.getMessage());
+                    toastMessage();
                 }
             });
         }
@@ -376,7 +375,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
 
 
     public static String getWeatherMessage() {
-        return message;
+        return message1;
     }
 
     public void getWeatherFromName (final String City) {
@@ -396,7 +395,7 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                         String t = String.valueOf(weatherResponseToday.main.temp);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         Log.i("weatherList:", weatherList.toString());
-                        message = City + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
+                        message1 = City + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
                         //textView.setText(message);
                         city=editText.getText().toString();
                         done=true;
@@ -412,24 +411,28 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                 @Override
                 public void onFailure(Call<WeatherResponseToday> call, Throwable t) {
                     Log.i("nice", t.getMessage());
+                    toastMessage();
                 }
             });
         }
     }
 
     public void getWeatherFromNameNextDays (final String city, final int i) {
-
+        Log.i("value i: ", String.valueOf(i));
 
         WeatherServiceNameNext service = ServiceGenerator.createService(WeatherServiceNameNext.class);
         Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(city, pref.getString("language", null), pref.getString("units", null), AppId);
         call.enqueue(new Callback<WeatherResponseNextDays>() {
+
             @Override
             public void onResponse(Call<WeatherResponseNextDays> call, Response<WeatherResponseNextDays> response) {
+                Log.i("value i: ", String.valueOf(i));
                 try {
                     WeatherResponseNextDays weatherResponseNextDays = response.body();
                     Log.i("server Response", response.body().toString());
                     //ArrayList<List> list = response.body().getList();
                     Log.i("working?", MainActivity.getCity());
+
                     ArrayList<List> list = response.body().getList();
                     String date = list.get(i).getDtTxt();
                     String t = String.valueOf(weatherResponseNextDays.getList().get(i).main.temp);
@@ -439,11 +442,11 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
                     Log.i("realm:", realm.where(CitySearchDB.class).findAll().toString());
                     Log.i("realmCount", String.valueOf(realm.where(CitySearchDB.class).count()));
                     if(realm.where(CitySearchDB.class).count()==5){
-                        fragmentManager();
+                        //fragmentManager();
                     }
                 }catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), city, Toast.LENGTH_SHORT).show();
+                    toastMessage();
                 }
             }
 
@@ -497,10 +500,9 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
         if (fragment != null) {
             fragmentTransaction.remove(fragment);
         }
-
         fragment = fragmentManager.findFragmentById(R.id.recyclerWeather);
         fragment = new WeatherListFragment();
-        fragmentTransaction.add(R.id.mainActivity, fragment);
+        fragmentTransaction.add(R.id.mainViewPager, fragment);
         fragmentTransaction.commit();
     }
 
@@ -548,11 +550,10 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
         setLangButton();
         setTempButton();
         loadPreferences();
-
         setContentView(R.layout.activity_main);
-        //recyclerView();
         realm = Realm.getDefaultInstance();
         findViews();
+        viewPager.setAdapter(new WeatherViewPagerAdapter(getSupportFragmentManager()));
         myToolbar.setTitle(appName);
         setSupportActionBar(myToolbar);
         location();
@@ -561,12 +562,13 @@ public class MainActivity extends AppCompatActivity /*implements RecyclerViewWea
         nextDayForecast.setText(nextDay);
         getInt();
         if(realm.where(CitySearchDB.class).count()==5){
-            fragmentManager();
+            //fragmentManager();
         }
         editText.setText(getCity());
         if(!editText.getText().toString().equals("")){
             check(view);
         }
+
     }
 
 }

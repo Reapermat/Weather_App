@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.model.activity.MainActivity;
 import com.matthewferry.ideoweather.model.adapter.RecyclerViewWeatherAdapter;
 import com.matthewferry.ideoweather.model.realm.CitySearchDB;
 import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
@@ -47,12 +46,16 @@ public class WeatherListFragment extends Fragment {
         Realm.init(getContext());
         getWeatherForecasts = new ArrayList<>();
         realm = Realm.getDefaultInstance();
-
+        if(realm.where(CitySearchDB.class).count()==5){
             getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(0).getCity()));
             getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(1).getCity()));
             getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(2).getCity()));
             getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(3).getCity()));
             getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(4).getCity()));
+        }
 
     }
+
+
+
 }
