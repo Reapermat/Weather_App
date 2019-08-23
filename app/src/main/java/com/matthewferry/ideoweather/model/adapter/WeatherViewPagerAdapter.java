@@ -18,6 +18,7 @@ public class WeatherViewPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+
     @Override
     public Fragment getItem(int i) {
         switch(i){
@@ -34,13 +35,4 @@ public class WeatherViewPagerAdapter extends FragmentPagerAdapter {
         return 2;
     }
 
-    @Override
-    public int getItemPosition(@NonNull Object object) {
-        return POSITION_NONE;
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-    }
 }

@@ -17,26 +17,27 @@ import java.util.Locale;
 
 import static com.matthewferry.ideoweather.model.activity.MainActivity.deleteCache;
 import static com.matthewferry.ideoweather.model.activity.MainActivity.getCity;
+import static com.matthewferry.ideoweather.model.activity.MainActivity.move;
 
 public class SettingsActivity extends AppCompatActivity {
 
 
-    Toolbar toolbar;
-    String title;
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
-    String lang;
-    CheckBox englishCheckBox;
-    CheckBox polishCheckBox;
-    CheckBox celsiusCheckBox;
-    CheckBox fahrenheitCheckBox;
-    TextView settingsLang;
-    TextView settingsUnits;
-    View view;
-    String setUnits;
-    String setLanguage;
-    static String language = "en";
-    static String units = "F";
+    private Toolbar toolbar;
+    private String title;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+    private String lang;
+    private CheckBox englishCheckBox;
+    private CheckBox polishCheckBox;
+    private CheckBox celsiusCheckBox;
+    private CheckBox fahrenheitCheckBox;
+    private TextView settingsLang;
+    private TextView settingsUnits;
+    public View view;
+    private String setUnits;
+    private String setLanguage;
+    public static String language = "en";
+    public static String units = "F";
 
 
     @Override
@@ -56,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         settingsLang.setText(setLanguage);
         settingsUnits.setText(setUnits);
-
+        MainActivity.move = true;
 
     }
 

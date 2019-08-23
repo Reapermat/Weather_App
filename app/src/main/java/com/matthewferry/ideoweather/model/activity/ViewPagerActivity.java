@@ -31,21 +31,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ViewPagerActivity extends AppCompatActivity {
 
-    ViewPager viewPager;
-    CircleIndicator circleIndicator;
-    MyPagerAdapter myPager;
-    TextView textView;
-    EditText editText;
-    SharedPreferences sharedPreferences;
-    String weatherNotFound;
-    String yourLocation;
+    private ViewPager viewPager;
+    private CircleIndicator circleIndicator;
+    private MyPagerAdapter myPager;
+    private TextView textView;
+    public EditText editText;
+    private SharedPreferences sharedPreferences;
+    public String weatherNotFound;
+    public String yourLocation;
     public String AppId = "5817ad2133c8314219db601b74a40a2b";
-    String message;
-    String wait;
-    ArrayList<String> weatherList;
-    String nextDays;
-    Toolbar myToolbar;
-    SharedPreferences.Editor editor;
+    private String message;
+    private String wait;
+    public ArrayList<String> weatherList;
+    private String nextDays;
+    private Toolbar myToolbar;
+    public SharedPreferences.Editor editor;
 
 
     @Override
@@ -63,6 +63,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(listener);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        MainActivity.move = true;
 
     }
 

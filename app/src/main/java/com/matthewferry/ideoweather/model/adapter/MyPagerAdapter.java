@@ -36,7 +36,7 @@ public class MyPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.activity_view_pager, null);
-        TextView textView = view.findViewById(R.id.firstDay);
+        /*TextView textView = view.findViewById(R.id.firstDay);*/
         //textView.setText(list.get(position));
         container.addView(view);
         return view;

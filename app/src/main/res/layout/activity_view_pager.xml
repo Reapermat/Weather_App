@@ -51,7 +51,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.966" />
+        app:layout_constraintVertical_bias="0.976" />
 
     <TextView
         android:id="@+id/nextDays"
@@ -63,9 +63,8 @@
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text=""
-        android:textColor="@android:color/background_light"
-        android:textSize="36sp"
-        android:textStyle="bold"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/viewPager"
         app:layout_constraintStart_toStartOf="parent"

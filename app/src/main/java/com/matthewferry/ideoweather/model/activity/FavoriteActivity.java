@@ -34,19 +34,19 @@ import io.realm.Realm;
 
 public class FavoriteActivity extends AppCompatActivity implements NewCityDialog.NewCityListener {
 
-    Realm realm;
-    RecyclerView recyclerView;
-    FloatingActionButton floatingActionButton;
-    TextView cities;
-    EditText dialogCity;
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
-    String lang;
-    String backTo;
-    String canceled;
-    String swipeToDelete;
-    String fav;
-    Toolbar toolbar;
+    private Realm realm;
+    private RecyclerView recyclerView;
+    private FloatingActionButton floatingActionButton;
+    public TextView cities;
+    public EditText dialogCity;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+    private String lang;
+    private String backTo;
+    private String canceled;
+    private String swipeToDelete;
+    private String fav;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         toolbar.setTitle(fav);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        MainActivity.move = true;
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,9 +79,9 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
                     @Override public void onItemClick(View view, int position) {
 
                         String city = ((TextView) recyclerView.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.cities)).getText().toString();
-                        Intent intentText = new Intent(FavoriteActivity.this, MainActivity.class);
-                        intentText.putExtra("City", city);
-                        startActivity(intentText);
+                        Intent intent = new Intent(FavoriteActivity.this, MainActivity.class);
+                        intent.putExtra("City", city);
+                        startActivity(intent);
                        // MainActivity.onAddCitySearch(city);
                     }
 
