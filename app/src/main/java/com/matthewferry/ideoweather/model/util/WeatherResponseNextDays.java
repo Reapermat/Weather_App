@@ -35,8 +35,6 @@ public class WeatherResponseNextDays {
     @Expose
     public ArrayList<List> list = null;
 
-
-
     public String getCod() {
         return cod;
     }

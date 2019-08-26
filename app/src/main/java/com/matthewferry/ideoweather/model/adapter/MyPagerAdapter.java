@@ -15,13 +15,10 @@ public class MyPagerAdapter extends PagerAdapter {
 
     private Context context;
     ViewPagerActivity viewPagerActivity;
-//    ArrayList<String> list = viewPagerActivity.getList();
-
 
     public MyPagerAdapter(Context context){
         this.context = context;
     }
-
 
     @Override
     public int getCount() {
@@ -46,9 +43,5 @@ public class MyPagerAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object view) {
         container.removeView((View) view);
     }
-
-
-
-
 
 }

@@ -8,10 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.model.realm.CityDB;
-
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
@@ -23,8 +21,6 @@ public class RecyclerViewAdapter extends RealmRecyclerViewAdapter<CityDB, Recycl
 
         setHasStableIds(true);
     }
-
-
 
     @NonNull
     @Override
@@ -38,7 +34,6 @@ public class RecyclerViewAdapter extends RealmRecyclerViewAdapter<CityDB, Recycl
 
         final CityDB cityDB = getItem(i);
         myViewHolder.txtCity.setText(cityDB.getCity());
-
 
     }
 
@@ -54,8 +49,6 @@ public class RecyclerViewAdapter extends RealmRecyclerViewAdapter<CityDB, Recycl
             txtCity = view.findViewById(R.id.cities);
         }
     }
-
-
 
 
 }

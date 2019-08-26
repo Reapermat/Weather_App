@@ -1,19 +1,13 @@
 package com.matthewferry.ideoweather.model.helper;
 
-
-import android.app.Notification;
-import android.os.Message;
 import android.util.Log;
-
 import com.matthewferry.ideoweather.model.realm.CityDB;
 import com.matthewferry.ideoweather.model.realm.CitySearchDB;
-
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 public class DataHelper {
-
 
     public static void newCity(Realm realm, int cityID, String city){
         RealmQuery<CityDB> result = realm.where(CityDB.class).equalTo("city", city);
@@ -30,7 +24,7 @@ public class DataHelper {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                CityDB cityDBItem = realm.where(CityDB.class).findFirst();
+                CityDB cityDBItem = realm.where(CityDB.class).equalTo("id", id).findFirst();
                 if(cityDBItem != null){
                     cityDBItem.deleteFromRealm();
                 }
@@ -58,8 +52,6 @@ public class DataHelper {
             }
         });
     }
-
-
 
 
 }

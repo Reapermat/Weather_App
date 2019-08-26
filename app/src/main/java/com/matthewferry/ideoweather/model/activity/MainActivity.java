@@ -28,7 +28,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.model.adapter.WeatherViewPagerAdapter;
@@ -44,14 +43,10 @@ import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
 import com.matthewferry.ideoweather.model.util.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.util.WeatherToday;
 import com.matthewferry.ideoweather.view.WeatherListFragment;
-
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
-
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import me.relex.circleindicator.CircleIndicator;
@@ -84,10 +79,10 @@ public class MainActivity extends AppCompatActivity{
     private String weatherNotFound;
     private String yourLocation;
     private String lang;
-    private String nextDay;
+    public String nextDay;
     private String appName;
     private String lastSearch;
-    private View view;
+    public View view;
     public String AppId = "c3ae299cd9fa2fa369c0839cc39e7b84";
     private Toolbar myToolbar;
     public static ArrayList<String> messages = new ArrayList<>();
@@ -108,7 +103,7 @@ public class MainActivity extends AppCompatActivity{
         editText = findViewById(R.id.editText);
         check = findViewById(R.id.button);
         setLocation = findViewById(R.id.setLocation);
-        nextDayForecast = findViewById(R.id.nextDayForecast);
+        //nextDayForecast = findViewById(R.id.nextDayForecast);
         enterCity = this.getString(R.string.enter_city);
         checkWeather_s = this.getString(R.string.check_weather);
         weatherNotFound = this.getString(R.string.weather_not_found);
@@ -423,12 +418,13 @@ public class MainActivity extends AppCompatActivity{
                     ArrayList<List> list = response.body().getList();
                     String date = list.get(i).getDtTxt();
                     String t = String.valueOf(weatherResponseNextDays.getList().get(i).main.temp);
-                    Log.i("what is this", list.get(i).getDtTxt());
-                    message = date + "\r\n" + city + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + list.get(i).weatherNext.get(0).getDescription();
+                    Log.i("date", list.get(i).dt.toString());
+                    CharSequence time = DateFormat.format("EEEE",(list.get(i).dt)*1000);
+                    Log.i("time", time.toString());
+                    message = time + "\r\n" + "(" + date + ")"+ "\r\n" + city + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + list.get(i).weatherNext.get(0).getDescription();
                     onAddCitySearch(message);
                     GetWeatherForecast.wCity=city;
-                    Log.i("realm:", realm.where(CitySearchDB.class).findAll().toString());
-                    Log.i("realmCount", String.valueOf(realm.where(CitySearchDB.class).count()));
+
                     if(realm.where(CitySearchDB.class).count()==5){
                         WeatherListFragment.doSmth();
                         recreate();
@@ -536,7 +532,7 @@ public class MainActivity extends AppCompatActivity{
         location();
         check.setText(checkWeather_s);
         editText.setHint(enterCity);
-        nextDayForecast.setText(nextDay);
+        //nextDayForecast.setText(nextDay);
         editText.setText(getCity());
         if (!editText.getText().toString().equals("") && move) {
             check(view);

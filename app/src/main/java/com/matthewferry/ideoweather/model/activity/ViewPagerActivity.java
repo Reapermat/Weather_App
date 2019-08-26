@@ -11,23 +11,19 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.model.adapter.MyPagerAdapter;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameNext;
 import com.matthewferry.ideoweather.model.serviceGenerator.ServiceGenerator;
 import com.matthewferry.ideoweather.model.util.List;
 import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
-
 import java.util.ArrayList;
 import java.util.Locale;
-
 import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class ViewPagerActivity extends AppCompatActivity {
 
@@ -97,7 +93,6 @@ public class ViewPagerActivity extends AppCompatActivity {
         }
     };
 
-
     private void loadPreferences(){
         try {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -120,9 +115,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         editor.apply();
     }
 
-
     public void getLocationFromName (final String City, final int i) {
-
 
             WeatherServiceNameNext service = ServiceGenerator.createService(WeatherServiceNameNext.class);
             Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(City, sharedPreferences.getString("language", null), sharedPreferences.getString("units", null), AppId);
@@ -144,7 +137,7 @@ public class ViewPagerActivity extends AppCompatActivity {
                         //weatherList.add(message);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), City, 10).show();
+                        Toast.makeText(getApplicationContext(), City, Toast.LENGTH_SHORT).show();
                     }
                 }
 

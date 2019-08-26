@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 public class WeatherResponseToday  {
 
-
-
     @SerializedName("coord")
     @Expose
     public Coord coord;
@@ -52,10 +50,10 @@ public class WeatherResponseToday  {
     @Expose
     public Snow snow;
 
-
     public ArrayList<WeatherToday> getWeather() {
         return weatherToday;
     }
+
     public Rain getRain() {
         return rain;
     }
@@ -83,7 +81,6 @@ public class WeatherResponseToday  {
     public Clouds getClouds() {
         return clouds;
     }
-
 
     public float getDt() {
         return dt;
@@ -127,7 +124,6 @@ public class WeatherResponseToday  {
 
     public float getCod() {
         return cod;
-
 
     }
 

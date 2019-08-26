@@ -12,9 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.model.activity.MainActivity;
+
 
 
 public class NewCityDialog extends DialogFragment {
@@ -75,8 +74,6 @@ public class NewCityDialog extends DialogFragment {
         });
         return builder.create();
     }
-
-
 
     public interface NewCityListener{
         void onAddCity(String city);

@@ -1,9 +1,6 @@
 package com.matthewferry.ideoweather.view;
 
-import android.arch.lifecycle.Lifecycle;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,14 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.model.adapter.RecyclerViewWeatherAdapter;
 import com.matthewferry.ideoweather.model.realm.CitySearchDB;
 import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
-
 import java.util.ArrayList;
-
 import io.realm.Realm;
 
 
@@ -29,7 +23,6 @@ public class WeatherListFragment extends Fragment implements RecyclerViewWeather
     public RecyclerViewWeatherAdapter recyclerViewWeatherAdapter;
     public static ArrayList<GetWeatherForecast> getWeatherForecasts;
     public static Realm realm;
-
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
 
@@ -65,7 +58,6 @@ public class WeatherListFragment extends Fragment implements RecyclerViewWeather
         }catch (Exception e){
             e.printStackTrace();
         }
-        Log.i("your problem?", String.valueOf(realm.where(CitySearchDB.class).count()));
     }
 
 

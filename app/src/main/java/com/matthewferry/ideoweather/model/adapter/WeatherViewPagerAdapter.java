@@ -18,7 +18,6 @@ public class WeatherViewPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
-
     @Override
     public Fragment getItem(int i) {
         switch(i){

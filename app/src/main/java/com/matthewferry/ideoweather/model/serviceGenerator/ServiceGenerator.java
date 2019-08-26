@@ -1,7 +1,5 @@
 package com.matthewferry.ideoweather.model.serviceGenerator;
 
-import com.matthewferry.ideoweather.model.interfaces.WeatherServiceLocationToday;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

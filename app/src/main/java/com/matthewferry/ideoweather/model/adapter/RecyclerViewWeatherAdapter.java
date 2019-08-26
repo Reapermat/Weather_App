@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerViewWeatherAdapter.ViewHolder> {
 
-
     private ItemClickListener mClickListener;
     Context context;
     ArrayList<GetWeatherForecast> getWeatherForecasts;
@@ -42,8 +41,6 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
         return getWeatherForecasts.size();
     }
 
-
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView myTextView;
 
@@ -52,7 +49,6 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
             myTextView = itemView.findViewById(R.id.weatherRow);
             itemView.setOnClickListener(this);
         }
-
 
         @Override
         public void onClick(View view) {
@@ -64,7 +60,6 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
     public String getItem(int id){
         return getWeatherForecasts.get(id).getMessage();
     }
-
 
     public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;

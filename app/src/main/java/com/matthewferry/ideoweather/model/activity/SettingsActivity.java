@@ -10,17 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
 import com.matthewferry.ideoweather.R;
-
 import java.util.Locale;
-
 import static com.matthewferry.ideoweather.model.activity.MainActivity.deleteCache;
-import static com.matthewferry.ideoweather.model.activity.MainActivity.getCity;
-import static com.matthewferry.ideoweather.model.activity.MainActivity.move;
+
 
 public class SettingsActivity extends AppCompatActivity {
-
 
     private Toolbar toolbar;
     private String title;
@@ -38,7 +33,6 @@ public class SettingsActivity extends AppCompatActivity {
     private String setLanguage;
     public static String language = "en";
     public static String units = "F";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +54,6 @@ public class SettingsActivity extends AppCompatActivity {
         MainActivity.move = true;
 
     }
-
 
     public void loadPreferences(){
         try {
@@ -133,7 +126,6 @@ public class SettingsActivity extends AppCompatActivity {
         englishCheckBox.setEnabled(false);
         polishCheckBox.setChecked(false);
         polishCheckBox.setEnabled(true);
-
         language = "en";
         editor.putString("language", "en");
         editor.commit();

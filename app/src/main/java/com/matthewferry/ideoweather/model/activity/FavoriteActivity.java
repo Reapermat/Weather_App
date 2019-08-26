@@ -19,17 +19,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.matthewferry.ideoweather.model.realm.CityDB;
 import com.matthewferry.ideoweather.model.helper.DataHelper;
 import com.matthewferry.ideoweather.view.NewCityDialog;
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.view.RecyclerItemClickListener;
 import com.matthewferry.ideoweather.model.adapter.RecyclerViewAdapter;
-
 import java.security.SecureRandom;
 import java.util.Locale;
-
 import io.realm.Realm;
 
 public class FavoriteActivity extends AppCompatActivity implements NewCityDialog.NewCityListener {
@@ -84,16 +81,12 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
                         startActivity(intent);
                        // MainActivity.onAddCitySearch(city);
                     }
-
                     @Override public void onLongItemClick(View view, int position) {
-                        Toast.makeText(FavoriteActivity.this, swipeToDelete, 10).show();
+                        Toast.makeText(FavoriteActivity.this, swipeToDelete, Toast.LENGTH_SHORT).show();
                     }
                 })
         );
-
-
     }
-
 
     public void onAddCity(String city) {
         SecureRandom secureRandom = new SecureRandom();
@@ -104,12 +97,11 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
     @Override
     public void onCancel(DialogFragment dialogFragment) {
 
-        Toast.makeText(this, canceled, 10).show();
+        Toast.makeText(this, canceled, Toast.LENGTH_SHORT).show();
 
     }
 
     private class TouchHelperCallback extends ItemTouchHelper.SimpleCallback{
-
 
         TouchHelperCallback(){
             super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
@@ -140,7 +132,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         }catch(Exception e){
             e.printStackTrace();
         }
-
     }
 
     private void setLocal(String lang){
@@ -179,7 +170,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         toolbar=findViewById(R.id.my_toolbar);
     }
 
-    }
+}
 
 
 
