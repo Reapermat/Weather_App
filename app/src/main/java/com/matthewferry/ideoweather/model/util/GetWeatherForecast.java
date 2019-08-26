@@ -20,7 +20,6 @@ import retrofit2.Response;
 public class GetWeatherForecast extends MainActivity {
 
     public String mMessage;
-
     public static String wCity;
     private Context context;
     public static int wI;

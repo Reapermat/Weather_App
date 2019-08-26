@@ -1,21 +1,15 @@
-
 package com.matthewferry.ideoweather.model.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerViewWeatherAdapter.ViewHolder> {
 
@@ -43,8 +37,6 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
         viewHolder.myTextView.setText(getWeatherForecasts.get(i).getMessage());
     }
 
-
-
     @Override
     public int getItemCount() {
         return getWeatherForecasts.size();
@@ -67,12 +59,15 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
             if (mClickListener != null){
                 mClickListener.onItemClick(view, getAdapterPosition());
             }
-
         }
+    }
+    public String getItem(int id){
+        return getWeatherForecasts.get(id).getMessage();
     }
 
 
-    public RecyclerViewWeatherAdapter(){
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
     }
 
     public interface ItemClickListener {

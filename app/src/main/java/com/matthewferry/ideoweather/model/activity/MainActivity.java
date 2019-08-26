@@ -17,6 +17,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,16 +38,18 @@ import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameNext;
 import com.matthewferry.ideoweather.model.interfaces.WeatherServiceNameToday;
 import com.matthewferry.ideoweather.model.realm.CitySearchDB;
 import com.matthewferry.ideoweather.model.serviceGenerator.ServiceGenerator;
+import com.matthewferry.ideoweather.model.util.GetWeatherForecast;
 import com.matthewferry.ideoweather.model.util.List;
 import com.matthewferry.ideoweather.model.util.WeatherResponseNextDays;
 import com.matthewferry.ideoweather.model.util.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.util.WeatherToday;
-import com.matthewferry.ideoweather.view.TextViewFragment;
 import com.matthewferry.ideoweather.view.WeatherListFragment;
 
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import io.realm.Realm;
@@ -74,7 +77,6 @@ public class MainActivity extends AppCompatActivity{
     private LatLng userLocation;
     private boolean geo = false;
     private boolean done;
-    private boolean fromFav;
     public SharedPreferences pref;
     public SharedPreferences.Editor editor;
     private String checkWeather_s;
@@ -93,12 +95,9 @@ public class MainActivity extends AppCompatActivity{
     public static String message1;
     private CircleIndicator circleIndicator;
     public static boolean move = false;
-
     public static String getLanguage(){
         return language;
     }
-
-
 
     public static String getCity(){
         return city;
@@ -107,7 +106,6 @@ public class MainActivity extends AppCompatActivity{
     public void findViews(){
 
         editText = findViewById(R.id.editText);
-       // textView = findViewById(R.id.textView);
         check = findViewById(R.id.button);
         setLocation = findViewById(R.id.setLocation);
         nextDayForecast = findViewById(R.id.nextDayForecast);
@@ -125,11 +123,8 @@ public class MainActivity extends AppCompatActivity{
         circleIndicator.setViewPager(viewPager);
     }
 
-
-
     public void toastMessage(){
         Toast.makeText(getApplicationContext(), weatherNotFound, Toast.LENGTH_SHORT).show();
-        //textView.setText("");
         done=false;
     }
 
@@ -192,6 +187,7 @@ public class MainActivity extends AppCompatActivity{
             message = "";
             geo = false;
             city=editText.getText().toString();
+            GetWeatherForecast.wCity=city;
             if(realm.where(CitySearchDB.class).count()>4){
                 DataHelper.deleteCitySearch(realm);
             }
@@ -199,7 +195,7 @@ public class MainActivity extends AppCompatActivity{
             for(int i=6; i<=38; i+=8) {
                 getWeatherFromNameNextDays(city, i);
                 Log.i("i", String.valueOf(i));
-                Thread.sleep(100);
+                Thread.sleep(200);
             }
 
         } catch (Exception e) {
@@ -336,6 +332,7 @@ public class MainActivity extends AppCompatActivity{
                         String t = String.valueOf(weatherResponseToday.main.temp);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         city = name;
+                        GetWeatherForecast.wCity=city;
                         editText.setText(getCity());
                         Log.i("name", getCity());
                         message1 =  name + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
@@ -346,6 +343,7 @@ public class MainActivity extends AppCompatActivity{
                         for(int i=6; i<=38; i+=8) {
                             getWeatherFromNameNextDays(city, i);
                             Log.i("i", String.valueOf(i));
+                            Thread.sleep(200);
                         }
                         done = true;
                         geo=false;
@@ -364,7 +362,6 @@ public class MainActivity extends AppCompatActivity{
             });
         }
     }
-
 
     public static String getWeatherMessage() {
         return message1;
@@ -387,8 +384,8 @@ public class MainActivity extends AppCompatActivity{
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         Log.i("weatherList:", weatherList.toString());
                         message1 = City + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + weatherList.get(0).getDescription();
-                        //textView.setText(message);
                         city=editText.getText().toString();
+                        GetWeatherForecast.wCity=city;
                         done=true;
                         //onAddCitySearch(message);
                         Log.i("message", getWeatherMessage());
@@ -429,6 +426,7 @@ public class MainActivity extends AppCompatActivity{
                     Log.i("what is this", list.get(i).getDtTxt());
                     message = date + "\r\n" + city + "\r\n" + t + (char) 0x00B0 + pref.getString("temperature", null) + "\r\n" + list.get(i).weatherNext.get(0).getDescription();
                     onAddCitySearch(message);
+                    GetWeatherForecast.wCity=city;
                     Log.i("realm:", realm.where(CitySearchDB.class).findAll().toString());
                     Log.i("realmCount", String.valueOf(realm.where(CitySearchDB.class).count()));
                     if(realm.where(CitySearchDB.class).count()==5){
@@ -449,7 +447,6 @@ public class MainActivity extends AppCompatActivity{
             }
         });
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -486,6 +483,7 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
     }
+
     public void realmConfig(){
         RealmConfiguration realmConfiguration = new RealmConfiguration
                 .Builder()
@@ -533,7 +531,6 @@ public class MainActivity extends AppCompatActivity{
         realm = Realm.getDefaultInstance();
         findViews();
         getInt();
-
         myToolbar.setTitle(appName);
         setSupportActionBar(myToolbar);
         location();
@@ -547,5 +544,6 @@ public class MainActivity extends AppCompatActivity{
         }else if(editText.getText().toString().equals("")){
             message1=lastSearch;
         }
+
     }
 }
