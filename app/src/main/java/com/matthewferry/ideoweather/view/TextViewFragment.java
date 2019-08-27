@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.model.activity.MainActivity;
+import com.matthewferry.ideoweather.helper.SharedPreference;
 
 public class TextViewFragment extends Fragment {
     TextView textView;
@@ -20,7 +20,7 @@ public class TextViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.weather_text_view, container, false);
         textView = view.findViewById(R.id.weatherTextView);
-        textView.setText(MainActivity.message1);
+        textView.setText(SharedPreference.message1);
         return view;
     }
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#63755A5A"
     android:id="@+id/mainActivity"
-    tools:context=".model.activity.MainActivity">
+    tools:context=".activity.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/main_toolbar"

@@ -13,16 +13,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".model.activity.SettingsActivity"
-            android:parentActivityName=".model.activity.MainActivity"></activity>
+        <activity android:name=".activity.SettingsActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".model.activity.ViewPagerActivity"
-            android:parentActivityName=".model.activity.MainActivity"
-            android:windowSoftInputMode="adjustNothing"/>
+            android:name=".activity.ViewPagerActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:windowSoftInputMode="adjustNothing"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".model.activity.FavoriteActivity"
-            android:parentActivityName=".model.activity.MainActivity" />
-        <activity android:name=".model.activity.MainActivity">
+            android:name=".activity.FavoriteActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
