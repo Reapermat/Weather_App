@@ -19,6 +19,7 @@
     <string name="units">Units: </string>
     <string name="language">Language: </string>
     <string name="last_search">Swipe right for the last searched forecast</string>
+    <string name="error">Error! Database is empty</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

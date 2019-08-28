@@ -10,12 +10,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather._interface.OpenWeatherMap;
+import com.matthewferry.ideoweather.api.OpenWeatherMap;
 import com.matthewferry.ideoweather.adapter.MyPagerAdapter;
 import com.matthewferry.ideoweather.helper.SharedPreference;
 import com.matthewferry.ideoweather.model.List;
 import com.matthewferry.ideoweather.model.WeatherResponseNextDays;
-import com.matthewferry.ideoweather.servicegenerator.ServiceGenerator;
+import com.matthewferry.ideoweather.api.ServiceGenerator;
 
 import java.util.ArrayList;
 

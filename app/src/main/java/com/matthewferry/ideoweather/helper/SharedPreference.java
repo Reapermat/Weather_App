@@ -9,13 +9,11 @@ import android.util.Log;
 import java.io.File;
 import java.util.Locale;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class SharedPreference {
 
-    public static SharedPreferences pref;
-    public static SharedPreferences.Editor editor;
-    public static String lang;
+    private static SharedPreferences pref;
+    private static SharedPreferences.Editor editor;
+    private static String lang;
     private static Context context;
     public static boolean move = false;
     public static String message1;
@@ -60,7 +58,7 @@ public class SharedPreference {
         try {
             editor.putString(key, value);
             editor.commit();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -86,6 +84,7 @@ public class SharedPreference {
     public static String getLanguage() {
         return language;
     }
+
 
     public static void deleteCache(Context context) {
         try {

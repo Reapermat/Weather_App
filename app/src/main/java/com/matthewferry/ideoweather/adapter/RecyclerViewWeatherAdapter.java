@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.matthewferry.ideoweather.R;
+import com.matthewferry.ideoweather.helper.SharedPreference;
 import com.matthewferry.ideoweather.model.GetWeatherForecast;
 
 import java.util.ArrayList;

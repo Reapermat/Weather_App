@@ -1,7 +1,6 @@
 package com.matthewferry.ideoweather.activity;
 
 import android.Manifest;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,11 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,8 +27,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather._interface.OpenWeatherMap;
 import com.matthewferry.ideoweather.adapter.WeatherViewPagerAdapter;
+import com.matthewferry.ideoweather.api.OpenWeatherMap;
+import com.matthewferry.ideoweather.api.ServiceGenerator;
 import com.matthewferry.ideoweather.helper.DataHelper;
 import com.matthewferry.ideoweather.helper.SharedPreference;
 import com.matthewferry.ideoweather.model.List;
@@ -41,7 +37,6 @@ import com.matthewferry.ideoweather.model.WeatherResponseNextDays;
 import com.matthewferry.ideoweather.model.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.WeatherToday;
 import com.matthewferry.ideoweather.realm.CitySearchDB;
-import com.matthewferry.ideoweather.servicegenerator.ServiceGenerator;
 import com.matthewferry.ideoweather.view.WeatherListFragment;
 
 import java.security.SecureRandom;
@@ -64,13 +59,11 @@ public class MainActivity extends AppCompatActivity {
     private static String units = "imperial";
     private static String language = "en";
     private static String city;
-    public static String message = "";
+    private String message = "";
     private Button check;
     private Button nextDayForecast;
     private Intent i;
     private ImageButton setLocation;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
     private LatLng userLocation;
     private boolean geo = false;
     private boolean done;
@@ -85,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     private ViewPager viewPager;
     private CircleIndicator circleIndicator;
-
 
     public static String getLanguage() {
         return language;
@@ -122,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void setLocation(View view) {
 
-        //location();
         requestSingleUpdate(getApplicationContext());
         editText.setText("");
         try {
@@ -146,11 +137,11 @@ public class MainActivity extends AppCompatActivity {
             if (isGPSEnabled) {
                 Criteria criteria = new Criteria();
                 criteria.setAccuracy(Criteria.ACCURACY_FINE);
-                if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                }/*else{
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1000, locationListener);
-                }*/
+                    return;
+                }
                 locationManager.requestSingleUpdate(criteria, new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
@@ -170,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, null);
             }
-
         } else {
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_COARSE);
@@ -194,20 +184,15 @@ public class MainActivity extends AppCompatActivity {
             }, null);
 
         }
-
-
     }
-   /* @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, locationListener);
-            }
+    private void requestPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
         }
-    }*/
+    }
+
 
     public void check(View view) {
         try {
@@ -325,7 +310,8 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         WeatherResponseToday weatherResponseToday = response.body();
                         String name = weatherResponseToday.getName();
-                        String t = String.valueOf(weatherResponseToday.getMain().getTemp());
+                        double temperature = weatherResponseToday.getMain().getTemp();
+                        String t = String.valueOf(Math.round(temperature * 2) / 2.0);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         city = name;
                         editText.setText(getCity());
@@ -372,7 +358,8 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         WeatherResponseToday weatherResponseToday = response.body();
                         Log.i("server Response", response.body().toString());
-                        String t = String.valueOf(weatherResponseToday.getMain().getTemp());
+                        double temperature = weatherResponseToday.getMain().getTemp();
+                        String t = String.valueOf(Math.round(temperature * 2) / 2.0);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         Log.i("weatherList:", weatherList.toString());
                         SharedPreference.message1 = City + "\r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + weatherList.get(0).getDescription();
@@ -410,14 +397,16 @@ public class MainActivity extends AppCompatActivity {
                     WeatherResponseNextDays weatherResponseNextDays = response.body();
                     Log.i("server Response", response.body().toString());
                     //ArrayList<List> list = response.body().getList();
+
                     Log.i("working?", MainActivity.getCity());
                     ArrayList<List> list = response.body().getList();
                     String date = list.get(i).getDtTxt();
-                    String t = String.valueOf(weatherResponseNextDays.getList().get(i).getMain().getTemp());
+                    double temperature = weatherResponseNextDays.getList().get(i).getMain().getTemp();
+                    String t = String.valueOf(Math.round(temperature * 2) / 2.0);
                     Log.i("date", list.get(i).getDt().toString());
                     CharSequence time = DateFormat.format("EEEE", (list.get(i).getDt()) * 1000);
                     Log.i("time", time.toString());
-                    message = time + "\r\n" + "(" + date + ")" + "\r\n" + city + "\r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + list.get(i).getWeather().get(0).getDescription();
+                    message = time + "\r\n (" + date + ") \r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + list.get(i).getWeather().get(0).getDescription();
                     onAddCitySearch(message);
 
                     if (realm.where(CitySearchDB.class).count() == 5) {
@@ -438,8 +427,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
 
     private void realmConfig() {
@@ -483,14 +470,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreference.loadPreferences(getBaseContext());
         setLangButton();
         setTempButton();
-
         setContentView(R.layout.activity_main);
+        requestPermission();
         realm = Realm.getDefaultInstance();
         findViews();
         getInt();
         myToolbar.setTitle(appName);
         setSupportActionBar(myToolbar);
-        requestSingleUpdate(getApplicationContext());
         check.setText(checkWeather_s);
         editText.setHint(enterCity);
         //nextDayForecast.setText(nextDay);
@@ -498,9 +484,8 @@ public class MainActivity extends AppCompatActivity {
         if (!editText.getText().toString().equals("") && SharedPreference.move) {
             check(view);
             SharedPreference.move = false;
-        } else if (editText.getText().toString().equals("")) {
+        } else if (editText.getText().toString().equals("") && realm.where(CitySearchDB.class).count() != 0) {
             SharedPreference.message1 = lastSearch;
         }
-
     }
 }

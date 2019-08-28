@@ -18,4 +18,5 @@
     <string name="language">Język: </string>
     <string name="units">Jednostki: </string>
     <string name="last_search">Przesuń w prawo aby zobaczyć ostatnią wyszukaną prognozę</string>
+    <string name="error">Error! Baza danych jest pusta</string>
 </resources>

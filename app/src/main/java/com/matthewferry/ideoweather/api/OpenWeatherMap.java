@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather._interface;
+package com.matthewferry.ideoweather.api;
 
 import com.matthewferry.ideoweather.model.WeatherResponseNextDays;
 import com.matthewferry.ideoweather.model.WeatherResponseToday;

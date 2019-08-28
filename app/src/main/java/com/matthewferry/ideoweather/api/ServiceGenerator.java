@@ -1,4 +1,4 @@
-package com.matthewferry.ideoweather.servicegenerator;
+package com.matthewferry.ideoweather.api;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceGenerator {
-    private static String apiKey = "c3ae299cd9fa2fa369c0839cc39e7b84";
+    private static final String apiKey = "c3ae299cd9fa2fa369c0839cc39e7b84";
 
     private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .addInterceptor(new Interceptor() {
