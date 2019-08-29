@@ -4,8 +4,10 @@ import android.util.Log;
 
 import com.matthewferry.ideoweather.realm.CityDB;
 import com.matthewferry.ideoweather.realm.CitySearchDB;
+import com.matthewferry.ideoweather.realm.CurrentForecast;
 
 import io.realm.Realm;
+import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
@@ -52,6 +54,31 @@ public class DataHelper {
             public void execute(Realm realm) {
                 RealmResults citySearchDB = realm.where(CitySearchDB.class).findAll();
                 citySearchDB.deleteAllFromRealm();
+            }
+        });
+    }
+
+
+    public static void addCurrentForecast(Realm realm, int currentForecastID, String forecast){
+
+        RealmQuery<CurrentForecast> result = realm.where(CurrentForecast.class).equalTo("idCurrentForecast", currentForecastID);
+        if(result.count()==0){
+            realm.beginTransaction();
+            CurrentForecast currentForecast = realm.createObject(CurrentForecast.class, currentForecastID);
+            currentForecast.setForecast(forecast);
+            realm.commitTransaction();
+        }
+
+    }
+
+    public static void deleteCurrentForecast(Realm realm){
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                CurrentForecast currentForecast = realm.where(CurrentForecast.class).findFirst();
+                if(currentForecast!=null) {
+                    currentForecast.deleteFromRealm();
+                }
             }
         });
     }

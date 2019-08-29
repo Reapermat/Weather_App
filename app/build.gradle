@@ -17,6 +17,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildscript {
+        repositories {
+            jcenter()
+        }
+        dependencies {
+            classpath "io.realm:realm-gradle-plugin:5.14.0"
+        }
+    }
 }
 
 dependencies {

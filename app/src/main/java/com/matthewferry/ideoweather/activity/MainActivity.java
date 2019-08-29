@@ -37,18 +37,20 @@ import com.matthewferry.ideoweather.model.WeatherResponseNextDays;
 import com.matthewferry.ideoweather.model.WeatherResponseToday;
 import com.matthewferry.ideoweather.model.WeatherToday;
 import com.matthewferry.ideoweather.realm.CitySearchDB;
+import com.matthewferry.ideoweather.realm.CurrentForecast;
 import com.matthewferry.ideoweather.view.WeatherListFragment;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.matthewferry.ideoweather.helper.SharedPreference.message1;
 import static com.matthewferry.ideoweather.helper.SharedPreference.savePreferences;
 
 
@@ -62,11 +64,12 @@ public class MainActivity extends AppCompatActivity {
     private String message = "";
     private Button check;
     private Button nextDayForecast;
+    private ImageButton favorite;
     private Intent i;
     private ImageButton setLocation;
     private LatLng userLocation;
     private boolean geo = false;
-    private boolean done;
+    private boolean weatherSet;
     private String checkWeather_s;
     private String enterCity;
     private String weatherNotFound;
@@ -74,14 +77,26 @@ public class MainActivity extends AppCompatActivity {
     public String nextDay;
     private String appName;
     private String lastSearch;
+    private String pressure;
+    private String humidity;
+    private String minTemp;
+    private String maxTemp;
+    private String presentTemp;
+    private String locatingUser;
+    private String userLocated;
     public View view;
     private Toolbar myToolbar;
     private ViewPager viewPager;
     private CircleIndicator circleIndicator;
-
-    public static String getLanguage() {
-        return language;
-    }
+    private CharSequence timeStamp;
+    private CharSequence timeStart;
+    private double temperature;
+    private double pressureCalc;
+    private double humidityCalc;
+    private double minTempCalc;
+    private double maxTempCalc;
+    private boolean locationSet = false;
+    private String cityAdded;
 
     public static String getCity() {
         return city;
@@ -100,6 +115,15 @@ public class MainActivity extends AppCompatActivity {
         nextDay = this.getString(R.string.next_days);
         appName = this.getString(R.string.app_name);
         lastSearch = this.getString(R.string.last_search);
+        pressure = this.getString(R.string.pressure);
+        humidity = this.getString(R.string.humidity);
+        minTemp = this.getString(R.string.temp_min);
+        maxTemp = this.getString(R.string.temp_max);
+        locatingUser = this.getString(R.string.locating_user);
+        userLocated = this.getString(R.string.location_set);
+        presentTemp = this.getString(R.string.present_temp);
+        cityAdded = this.getString(R.string.city_added);
+        favorite = findViewById(R.id.favoriteButton);
         myToolbar = findViewById(R.id.main_toolbar);
         viewPager = findViewById(R.id.mainViewPager);
         viewPager.setAdapter(new WeatherViewPagerAdapter(getSupportFragmentManager()));
@@ -109,24 +133,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void toastMessage() {
         Toast.makeText(getApplicationContext(), weatherNotFound, Toast.LENGTH_SHORT).show();
-        done = false;
+        weatherSet = false;
+        SharedPreference.setPreference("weatherSet", "false");
+        favorite.setVisibility(View.INVISIBLE);
     }
 
     public void setLocation(View view) {
-
-        requestSingleUpdate(getApplicationContext());
-        editText.setText("");
-        try {
-            geo = true;
-            message = yourLocation + "\r\n";
-            getWeatherFromLocation(String.valueOf(userLocation.latitude), String.valueOf(userLocation.longitude));
-        } catch (Exception e) {
-            geo = false;
-            e.printStackTrace();
-            toastMessage();
+        //favorite.setVisibility(View.INVISIBLE);
+        if (!locationSet) {
+            requestSingleUpdate(getApplicationContext());
+            Toast.makeText(this, locatingUser, Toast.LENGTH_SHORT).show();
+            setLocation.setClickable(false);
         }
-        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); //makes keyboard disappear
-        mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        if (userLocation != null) {
+            try {
+                geo = true;
+                getWeatherFromLocation(String.valueOf(userLocation.latitude), String.valueOf(userLocation.longitude));
+                favorite.setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                geo = false;
+                e.printStackTrace();
+                toastMessage();
+            }
+            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); //makes keyboard disappear
+            mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
     }
 
     public void requestSingleUpdate(final Context context) {
@@ -146,6 +177,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onLocationChanged(Location location) {
                         userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        setLocation.setClickable(true);
+                        Toast.makeText(getApplicationContext(), userLocated, Toast.LENGTH_SHORT).show();
+                        locationSet = true;
+                        setLocation.callOnClick();
                     }
 
                     @Override
@@ -168,6 +203,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onLocationChanged(Location location) {
                     userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    setLocation.setClickable(true);
+                    Toast.makeText(getApplicationContext(), userLocated, Toast.LENGTH_SHORT).show();
+                    locationSet = true;
+                    setLocation.callOnClick();
                 }
 
                 @Override
@@ -196,7 +235,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void check(View view) {
         try {
-            done = true;
+            weatherSet = true;
+            SharedPreference.setPreference("weatherSet", "true");
             message = "";
             geo = false;
             city = editText.getText().toString();
@@ -210,8 +250,11 @@ public class MainActivity extends AppCompatActivity {
                 Thread.sleep(200);
             }
 
+            SharedPreference.setPreference("city", getCity());
         } catch (Exception e) {
-            done = false;
+            weatherSet = false;
+            SharedPreference.setPreference("weatherSet", "false");
+            favorite.setVisibility(View.INVISIBLE);
             e.printStackTrace();
             toastMessage();
         }
@@ -225,15 +268,44 @@ public class MainActivity extends AppCompatActivity {
         DataHelper.newCitySearch(realm, cityID, city);
     }
 
+    private void addCurrentForecast(String forecast) {
+        SecureRandom secureRandom = new SecureRandom();
+        int idCurrentForecast = secureRandom.nextInt(10000);
+        DataHelper.addCurrentForecast(realm, idCurrentForecast, forecast);
+    }
+
+    private void addToFavorite(String city) {
+        SecureRandom secureRandom = new SecureRandom();
+        int cityID = secureRandom.nextInt(10000);
+        DataHelper.newCity(realm, cityID, city);
+    }
+
+    public void addCityToFavorite(View view){
+        try {
+            if (SharedPreference.getPreference("weatherSet").equals("true")) {
+                Log.i("city", getCity());
+                addToFavorite(getCity());
+                Toast.makeText(this, cityAdded, Toast.LENGTH_SHORT).show();
+            } else {
+                Log.i("city", getCity());
+                Log.i("weatherSet", String.valueOf(weatherSet));
+                toastMessage();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            toastMessage();
+        }
+    }
 
     public void goToFavorite(View view) {
-
+        SharedPreference.setPreference("weatherSet", "false");
         Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
         startActivity(intent);
 
     }
 
     public void goToSettings(View view) {
+        SharedPreference.setPreference("weatherSet", "false");
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
@@ -242,10 +314,11 @@ public class MainActivity extends AppCompatActivity {
         if (getCity() != null) {
             if (!geo)
                 check(view);
-            if (done) {
+            if (weatherSet) {
                 Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
                 startActivity(intent);
-                done = false;
+                weatherSet = false;
+                favorite.setVisibility(View.INVISIBLE);
             }
         } else {
             toastMessage();
@@ -254,11 +327,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void getInt() {
         i = getIntent();
-        Bundle b = i.getExtras();
+        editText.setText("");
         try {
-            if (b != null) {
-                editText.setText(b.get("City").toString());
-            }
             if (!editText.getText().toString().equals("") && SharedPreference.move) {
                 check(view);
                 SharedPreference.move = false;
@@ -310,14 +380,29 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         WeatherResponseToday weatherResponseToday = response.body();
                         String name = weatherResponseToday.getName();
-                        double temperature = weatherResponseToday.getMain().getTemp();
-                        String t = String.valueOf(Math.round(temperature * 2) / 2.0);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         city = name;
                         editText.setText(getCity());
-                        Log.i("name", getCity());
-                        SharedPreference.message1 = name + "\r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + weatherList.get(0).getDescription();
-                        //textView.setText(yourLocation + " " +message);
+                        temperature = weatherResponseToday.getMain().getTemp();
+                        pressureCalc = roundToHalf(weatherResponseToday.getMain().getPressure());
+                        humidityCalc = roundToHalf(weatherResponseToday.getMain().getHumidity());
+                        minTempCalc = roundToHalf(weatherResponseToday.getMain().getTemp_min());
+                        maxTempCalc = roundToHalf(weatherResponseToday.getMain().getTemp_max());
+                        String t = String.valueOf(Math.round(temperature * 2) / 2.0);
+                        SharedPreference.message1 = name + "\r\n" + presentTemp + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
+                                + minTemp + minTempCalc + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
+                                + maxTemp + maxTempCalc + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
+                                + weatherList.get(0).getDescription() + "\r\n"
+                                + pressure + pressureCalc + " hPa" + "\r\n" + humidity + humidityCalc + " %";
+                        city = editText.getText().toString();
+                        addCurrentForecast(message1);
+                        if (realm.where(CurrentForecast.class).count() > 1) {
+                            DataHelper.deleteCurrentForecast(realm);
+                        }
+                        timeStamp = DateFormat.format("DD-MM-YYYY", new Date());
+                        SharedPreference.setPreference("timestamp", timeStamp.toString());
+                        Log.i("realm_location", realm.where(CurrentForecast.class).findAll().last().getForecast());
+                        SharedPreference.setPreference("city", getCity());
                         if (realm.where(CitySearchDB.class).count() > 4) {
                             DataHelper.deleteCitySearch(realm);
                         }
@@ -326,12 +411,16 @@ public class MainActivity extends AppCompatActivity {
                             Log.i("i", String.valueOf(i));
                             Thread.sleep(200);
                         }
-                        done = true;
+
+                        weatherSet = true;
+                        SharedPreference.setPreference("weatherSet", "true");
                         geo = false;
+                        favorite.setVisibility(View.VISIBLE);
                     } catch (Exception e) {
                         e.printStackTrace();
                         toastMessage();
-                        done = false;
+                        weatherSet = false;
+                        SharedPreference.setPreference("weatherSet", "false");
                     }
                 }
 
@@ -358,19 +447,36 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         WeatherResponseToday weatherResponseToday = response.body();
                         Log.i("server Response", response.body().toString());
-                        double temperature = weatherResponseToday.getMain().getTemp();
+                        temperature = weatherResponseToday.getMain().getTemp();
+                        pressureCalc = roundToHalf(weatherResponseToday.getMain().getPressure());
+                        humidityCalc = roundToHalf(weatherResponseToday.getMain().getHumidity());
+                        minTempCalc = roundToHalf(weatherResponseToday.getMain().getTemp_min());
+                        maxTempCalc = roundToHalf(weatherResponseToday.getMain().getTemp_max());
                         String t = String.valueOf(Math.round(temperature * 2) / 2.0);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
                         Log.i("weatherList:", weatherList.toString());
-                        SharedPreference.message1 = City + "\r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + weatherList.get(0).getDescription();
+                        SharedPreference.message1 = City + "\r\n" + presentTemp + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
+                                + minTemp + minTempCalc + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
+                                + maxTemp + maxTempCalc + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
+                                + weatherList.get(0).getDescription() + "\r\n"
+                                + pressure + pressureCalc + " hPa" + "\r\n" + humidity + humidityCalc + " %";
                         city = editText.getText().toString();
-                        done = true;
-                        //onAddCitySearch(message);
-                        Log.i("message", SharedPreference.getWeatherMessage());
+                        weatherSet = true;
+                        SharedPreference.setPreference("weatherSet", "true");
+                        addCurrentForecast(message1);
+                        if (realm.where(CurrentForecast.class).count() > 1) {
+                            DataHelper.deleteCurrentForecast(realm);
+                        }
+                        timeStamp = DateFormat.format("DD-MM-YYYY", new Date());
+                        SharedPreference.setPreference("timestamp", timeStamp.toString());
+                        Log.i("calendar", timeStamp.toString());
+                        Log.i("realm", realm.where(CurrentForecast.class).findAll().toString());
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         toastMessage();
-                        done = false;
+                        weatherSet = false;
+                        SharedPreference.setPreference("weatherSet", "false");
                     }
                 }
 
@@ -401,23 +507,25 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("working?", MainActivity.getCity());
                     ArrayList<List> list = response.body().getList();
                     String date = list.get(i).getDtTxt();
-                    double temperature = weatherResponseNextDays.getList().get(i).getMain().getTemp();
-                    String t = String.valueOf(Math.round(temperature * 2) / 2.0);
-                    Log.i("date", list.get(i).getDt().toString());
-                    CharSequence time = DateFormat.format("EEEE", (list.get(i).getDt()) * 1000);
+                    double temperature = roundToHalf(weatherResponseNextDays.getList().get(i).getMain().getTemp());
+                    Log.i("date", String.valueOf((list.get(i).getDt())));
+                    CharSequence time = DateFormat.format("EEEE", ((list.get(i).getDt())) * 1000);
                     Log.i("time", time.toString());
-                    message = time + "\r\n (" + date + ") \r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + list.get(i).getWeather().get(0).getDescription();
+                    message = time + "\r\n (" + date + ") \r\n" + temperature + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + list.get(i).getWeather().get(0).getDescription();
                     onAddCitySearch(message);
 
                     if (realm.where(CitySearchDB.class).count() == 5) {
                         WeatherListFragment.doSmth();
+                        favorite.setVisibility(View.VISIBLE);
                         recreate();
                     }
-                    done = true;
+                    weatherSet = true;
+                    SharedPreference.setPreference("weatherSet", "true");
                 } catch (Exception e) {
                     e.printStackTrace();
                     toastMessage();
-                    done = false;
+                    weatherSet = false;
+                    SharedPreference.setPreference("weatherSet", "false");
                 }
             }
 
@@ -428,16 +536,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    private void realmConfig() {
-        RealmConfiguration realmConfiguration = new RealmConfiguration
-                .Builder()
-                .deleteRealmIfMigrationNeeded()
-                .name(Realm.DEFAULT_REALM_NAME)
-                .schemaVersion(1)
-                .build();
-        Realm.setDefaultConfiguration(realmConfiguration);
+    private double roundToHalf(double d) {
+        return Math.round(d * 2) / 2.0;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -465,8 +567,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Realm.init(this);
-        realmConfig();
         SharedPreference.loadPreferences(getBaseContext());
         setLangButton();
         setTempButton();
@@ -479,13 +579,31 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         check.setText(checkWeather_s);
         editText.setHint(enterCity);
-        //nextDayForecast.setText(nextDay);
-        editText.setText(getCity());
+        timeStart = DateFormat.format("DD-MM-YYYY", new Date());
+
+        if (editText.getText().toString().equals("") && realm.where(CurrentForecast.class).count() != 0 && timeStart.equals(SharedPreference.getPreference("timestamp"))) {
+            //favorite.setVisibility(View.INVISIBLE);
+            SharedPreference.message1 = realm.where(CurrentForecast.class).findAll().last().getForecast();
+        }
+        editText.setText(SharedPreference.getPreference("city"));
+        //favorite.setVisibility(View.VISIBLE);
         if (!editText.getText().toString().equals("") && SharedPreference.move) {
             check(view);
+            SharedPreference.setPreference("weatherSet", "false");
             SharedPreference.move = false;
-        } else if (editText.getText().toString().equals("") && realm.where(CitySearchDB.class).count() != 0) {
-            SharedPreference.message1 = lastSearch;
+
         }
+        try{
+            if(SharedPreference.getPreference("weatherSet").equals("true")){
+                Log.i("vis?", String.valueOf(favorite.getVisibility()));
+                favorite.setVisibility(View.VISIBLE);
+            }else {
+                favorite.setVisibility(View.INVISIBLE);
+                Log.i("invis?", String.valueOf(favorite.getVisibility()));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

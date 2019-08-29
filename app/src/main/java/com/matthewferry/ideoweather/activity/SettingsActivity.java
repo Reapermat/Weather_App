@@ -101,11 +101,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void toPolish(View view) {
 
+        SharedPreference.setLocal("pl", getBaseContext());
         englishCheckBox.setChecked(false);
         englishCheckBox.setEnabled(true);
         polishCheckBox.setChecked(true);
         polishCheckBox.setEnabled(false);
-        SharedPreference.setLocal("pl", getBaseContext());
         SharedPreference.language = "pl";
         SharedPreference.setPreference("language", "pl");
         SharedPreference.savePreferences("language", "pl", getApplicationContext());

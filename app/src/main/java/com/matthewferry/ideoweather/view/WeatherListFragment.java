@@ -42,7 +42,6 @@ public class WeatherListFragment extends Fragment implements RecyclerViewWeather
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Realm.init(getContext());
         getWeatherForecasts = new ArrayList<>();
         realm = Realm.getDefaultInstance();
         doSmth();

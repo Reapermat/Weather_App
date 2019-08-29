@@ -19,4 +19,12 @@
     <string name="units">Jednostki: </string>
     <string name="last_search">Przesuń w prawo aby zobaczyć ostatnią wyszukaną prognozę</string>
     <string name="error">Error! Baza danych jest pusta</string>
+    <string name="pressure">"Ciśnienie: "</string>
+    <string name="humidity">"Wilgotność: "</string>
+    <string name="temp_min">"Min. temp: "</string>
+    <string name="temp_max">"Max. temp: "</string>
+    <string name="present_temp">"Obecnie: "</string>
+    <string name="locating_user">Lokalizowanie użytkownika</string>
+    <string name="location_set">Użytkownik zlokalizowany</string>
+    <string name="city_added">Miasto dodane</string>
 </resources>

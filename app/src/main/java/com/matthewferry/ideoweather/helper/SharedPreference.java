@@ -33,6 +33,7 @@ public class SharedPreference {
             lang = pref.getString("language", null);
             Log.i("language", SharedPreference.getPreference("language"));
             Log.i("units", SharedPreference.getPreference("units"));
+            Log.i("visibility", SharedPreference.getPreference("weatherSet"));
             setLocal(lang, context);
         } catch (Exception e) {
             e.printStackTrace();

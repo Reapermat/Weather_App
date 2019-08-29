@@ -28,11 +28,11 @@ import java.security.SecureRandom;
 
 import io.realm.Realm;
 
-public class FavoriteActivity extends AppCompatActivity implements NewCityDialog.NewCityListener {
+public class FavoriteActivity extends AppCompatActivity/* implements NewCityDialog.NewCityListener */{
 
     private Realm realm;
     private RecyclerView recyclerView;
-    private FloatingActionButton floatingActionButton;
+    //private FloatingActionButton floatingActionButton;
     public TextView cities;
     public EditText dialogCity;
     private String lang;
@@ -46,7 +46,6 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Realm.init(this);
         SharedPreference.loadPreferences(getApplicationContext());
         setContentView(R.layout.activity_favorite);
         realm = Realm.getDefaultInstance();
@@ -58,13 +57,13 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         SharedPreference.move = true;
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        /*floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addCityDialog.show(getSupportFragmentManager(), "New City");
 
             }
-        });
+        });*/
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -73,7 +72,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
 
                         String city = ((TextView) recyclerView.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.cities)).getText().toString();
                         Intent intent = new Intent(FavoriteActivity.this, MainActivity.class);
-                        intent.putExtra("City", city);
+                        SharedPreference.setPreference("city", city);
                         startActivity(intent);
                         // MainActivity.onAddCitySearch(city);
                     }
@@ -86,18 +85,14 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
         );
     }
 
-    public void onAddCity(String city) {
-        SecureRandom secureRandom = new SecureRandom();
-        int cityID = secureRandom.nextInt(10000);
-        DataHelper.newCity(realm, cityID, city);
-    }
 
-    @Override
+
+    /*@Override
     public void onCancel(DialogFragment dialogFragment) {
 
         Toast.makeText(this, canceled, Toast.LENGTH_SHORT).show();
 
-    }
+    }*/
 
     private class TouchHelperCallback extends ItemTouchHelper.SimpleCallback {
 
@@ -136,7 +131,7 @@ public class FavoriteActivity extends AppCompatActivity implements NewCityDialog
     private void findViews() {
         recyclerView = findViewById(R.id.myRecyclerView);
         cities = findViewById(R.id.cities);
-        floatingActionButton = findViewById(R.id.floatingActionButton);
+        //floatingActionButton = findViewById(R.id.floatingActionButton);
         dialogCity = findViewById(R.id.dialogCity);
         backTo = getString(R.string.back_to_main);
         canceled = getString(R.string.canceled);

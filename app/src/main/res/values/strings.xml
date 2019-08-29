@@ -20,6 +20,14 @@
     <string name="language">Language: </string>
     <string name="last_search">Swipe right for the last searched forecast</string>
     <string name="error">Error! Database is empty</string>
+    <string name="pressure">"Pressure: "</string>
+    <string name="humidity">"Humidity: "</string>
+    <string name="temp_min">"Min. temp: "</string>
+    <string name="temp_max">"Max. temp: "</string>
+    <string name="present_temp">"Presently: "</string>
+    <string name="locating_user">Locating user</string>
+    <string name="location_set">User located</string>
+    <string name="city_added">City added</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
