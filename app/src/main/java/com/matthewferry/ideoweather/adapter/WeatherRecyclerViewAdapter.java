@@ -13,13 +13,13 @@ import com.matthewferry.ideoweather.model.GetWeatherForecast;
 
 import java.util.ArrayList;
 
-public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerViewWeatherAdapter.ViewHolder> {
+public class WeatherRecyclerViewAdapter extends RecyclerView.Adapter<WeatherRecyclerViewAdapter.ViewHolder> {
 
     private ItemClickListener mClickListener;
     Context context;
     ArrayList<GetWeatherForecast> getWeatherForecasts;
 
-    public RecyclerViewWeatherAdapter(Context context, ArrayList<GetWeatherForecast> getWeatherForecasts) {
+    public WeatherRecyclerViewAdapter(Context context, ArrayList<GetWeatherForecast> getWeatherForecasts) {
         this.context = context;
         this.getWeatherForecasts = getWeatherForecasts;
     }
@@ -34,7 +34,7 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewWeatherAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(WeatherRecyclerViewAdapter.ViewHolder viewHolder, int i) {
         viewHolder.myTextView.setText(getWeatherForecasts.get(i).getMessage());
     }
 
@@ -54,9 +54,7 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) {
-                mClickListener.onItemClick(view, getAdapterPosition());
-            }
+            mClickListener.onItemClick(getAdapterPosition());
         }
     }
 
@@ -69,7 +67,7 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(int position);
     }
 
 

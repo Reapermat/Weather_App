@@ -28,6 +28,7 @@
     <string name="locating_user">Locating user</string>
     <string name="location_set">User located</string>
     <string name="city_added">City added</string>
+    <string name="detailed_forecast">Detailed weather forecast</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

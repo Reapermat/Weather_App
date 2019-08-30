@@ -15,10 +15,10 @@ import com.matthewferry.ideoweather.realm.CityDB;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class RecyclerViewAdapter extends RealmRecyclerViewAdapter<CityDB, RecyclerViewAdapter.MyViewHolder> {
+public class FavoriteRecyclerView extends RealmRecyclerViewAdapter<CityDB, FavoriteRecyclerView.MyViewHolder> {
 
 
-    public RecyclerViewAdapter(@Nullable OrderedRealmCollection<CityDB> data) {
+    public FavoriteRecyclerView(@Nullable OrderedRealmCollection<CityDB> data) {
         super(data, true);
 
         setHasStableIds(true);
@@ -26,13 +26,13 @@ public class RecyclerViewAdapter extends RealmRecyclerViewAdapter<CityDB, Recycl
 
     @NonNull
     @Override
-    public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public FavoriteRecyclerView.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row, viewGroup, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewAdapter.MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull FavoriteRecyclerView.MyViewHolder myViewHolder, int i) {
 
         final CityDB cityDB = getItem(i);
         myViewHolder.txtCity.setText(cityDB.getCity());

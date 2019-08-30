@@ -1,5 +1,6 @@
 package com.matthewferry.ideoweather.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.adapter.RecyclerViewWeatherAdapter;
+import com.matthewferry.ideoweather.activity.DetailedWeatherForecastForNextDays;
+import com.matthewferry.ideoweather.adapter.WeatherRecyclerViewAdapter;
 import com.matthewferry.ideoweather.model.GetWeatherForecast;
 import com.matthewferry.ideoweather.realm.CitySearchDB;
 
@@ -20,11 +22,12 @@ import java.util.ArrayList;
 import io.realm.Realm;
 
 
-public class WeatherListFragment extends Fragment implements RecyclerViewWeatherAdapter.ItemClickListener {
+public class WeatherListFragment extends Fragment{
     private RecyclerView recyclerView;
-    public RecyclerViewWeatherAdapter recyclerViewWeatherAdapter;
+    public WeatherRecyclerViewAdapter weatherRecyclerViewAdapter;
     public static ArrayList<GetWeatherForecast> getWeatherForecasts;
     public static Realm realm;
+    private WeatherRecyclerViewAdapter adapter;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
@@ -32,9 +35,14 @@ public class WeatherListFragment extends Fragment implements RecyclerViewWeather
         recyclerView = view.findViewById(R.id.recyclerWeather);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerViewWeatherAdapter = new RecyclerViewWeatherAdapter(getContext(), getWeatherForecasts);
-        recyclerView.setAdapter(recyclerViewWeatherAdapter);
-        recyclerViewWeatherAdapter.setClickListener(this);
+        weatherRecyclerViewAdapter = new WeatherRecyclerViewAdapter(getContext(), getWeatherForecasts);
+        recyclerView.setAdapter(weatherRecyclerViewAdapter);
+        weatherRecyclerViewAdapter.setClickListener(new WeatherRecyclerViewAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                onItemClickToast(position);
+            }
+        });
         return view;
     }
 
@@ -50,19 +58,18 @@ public class WeatherListFragment extends Fragment implements RecyclerViewWeather
     public static void doSmth() {
         try {
             if (realm.where(CitySearchDB.class).count() == 5) {
-                getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(0).getCity()));
-                getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(1).getCity()));
-                getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(2).getCity()));
-                getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(3).getCity()));
-                getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(4).getCity()));
+                for (int i = 0; i < 5; i++) {
+                    getWeatherForecasts.add(new GetWeatherForecast(realm.where(CitySearchDB.class).findAll().get(i).getCity()));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void onItemClick(View view, int position) {
-        Toast.makeText(getContext(), recyclerViewWeatherAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+    private void onItemClickToast(int position) {
+        Intent intent = new Intent(getContext(), DetailedWeatherForecastForNextDays.class);
+        intent.putExtra("Weather_Forecast", getWeatherForecasts.get(position).getwCity());
+        startActivity(intent);
     }
 }

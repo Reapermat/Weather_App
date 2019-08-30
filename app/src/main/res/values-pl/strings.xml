@@ -27,4 +27,5 @@
     <string name="locating_user">Lokalizowanie użytkownika</string>
     <string name="location_set">Użytkownik zlokalizowany</string>
     <string name="city_added">Miasto dodane</string>
+    <string name="detailed_forecast">Szczegółowa prognoza pogody</string>
 </resources>

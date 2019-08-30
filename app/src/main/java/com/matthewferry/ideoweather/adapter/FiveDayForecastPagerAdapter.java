@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.activity.ViewPagerActivity;
 
-public class MyPagerAdapter extends PagerAdapter {
+public class FiveDayForecastPagerAdapter extends PagerAdapter {
 
     private Context context;
     ViewPagerActivity viewPagerActivity;
 
-    public MyPagerAdapter(Context context) {
+    public FiveDayForecastPagerAdapter(Context context) {
         this.context = context;
     }
 

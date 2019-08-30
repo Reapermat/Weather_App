@@ -19,6 +19,12 @@ public class SharedPreference {
     public static String message1;
     public static String language = "en";
     public static String units = "F";
+    public static String city;
+
+
+    public static String getCity() {
+        return city;
+    }
 
     public static void savePreferences(String key, String value, Context context) {
         pref = PreferenceManager.getDefaultSharedPreferences(context);

@@ -1,11 +1,11 @@
-package com.matthewferry.ideoweather.realm;
+package com.matthewferry.ideoweather;
 
 import android.app.Application;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class RealmInitialization extends Application {
+public class WeatherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

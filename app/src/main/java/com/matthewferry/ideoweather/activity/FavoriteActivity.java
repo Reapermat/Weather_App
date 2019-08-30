@@ -3,7 +3,6 @@ package com.matthewferry.ideoweather.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -17,18 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
-import com.matthewferry.ideoweather.adapter.RecyclerViewAdapter;
+import com.matthewferry.ideoweather.adapter.FavoriteRecyclerView;
 import com.matthewferry.ideoweather.helper.DataHelper;
 import com.matthewferry.ideoweather.helper.SharedPreference;
 import com.matthewferry.ideoweather.realm.CityDB;
 import com.matthewferry.ideoweather.view.NewCityDialog;
-import com.matthewferry.ideoweather.view.RecyclerItemClickListener;
-
-import java.security.SecureRandom;
+import com.matthewferry.ideoweather.view.FavoriteRecyclerItemClickListener;
 
 import io.realm.Realm;
 
-public class FavoriteActivity extends AppCompatActivity/* implements NewCityDialog.NewCityListener */{
+public class FavoriteActivity extends AppCompatActivity/* implements NewCityDialog.NewCityListener */ {
 
     private Realm realm;
     private RecyclerView recyclerView;
@@ -57,6 +54,7 @@ public class FavoriteActivity extends AppCompatActivity/* implements NewCityDial
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         SharedPreference.move = true;
 
+
         /*floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,9 +62,8 @@ public class FavoriteActivity extends AppCompatActivity/* implements NewCityDial
 
             }
         });*/
-
         recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                new FavoriteRecyclerItemClickListener(this, recyclerView, new FavoriteRecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
 
@@ -74,6 +71,7 @@ public class FavoriteActivity extends AppCompatActivity/* implements NewCityDial
                         Intent intent = new Intent(FavoriteActivity.this, MainActivity.class);
                         SharedPreference.setPreference("city", city);
                         startActivity(intent);
+                        finish();
                         // MainActivity.onAddCitySearch(city);
                     }
 
@@ -84,7 +82,6 @@ public class FavoriteActivity extends AppCompatActivity/* implements NewCityDial
                 })
         );
     }
-
 
 
     /*@Override
@@ -112,7 +109,7 @@ public class FavoriteActivity extends AppCompatActivity/* implements NewCityDial
     }
 
     private void SetUpRecyclerView() {
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(realm.where(CityDB.class).findAll());
+        FavoriteRecyclerView adapter = new FavoriteRecyclerView(realm.where(CityDB.class).findAll());
 
         try {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));

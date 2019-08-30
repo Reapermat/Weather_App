@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.api.OpenWeatherMap;
-import com.matthewferry.ideoweather.adapter.MyPagerAdapter;
+import com.matthewferry.ideoweather.adapter.FiveDayForecastPagerAdapter;
 import com.matthewferry.ideoweather.helper.SharedPreference;
 import com.matthewferry.ideoweather.model.List;
 import com.matthewferry.ideoweather.model.WeatherResponseNextDays;
@@ -29,7 +29,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private CircleIndicator circleIndicator;
-    private MyPagerAdapter myPager;
+    private FiveDayForecastPagerAdapter myPager;
     private TextView textView;
     public EditText editText;
     public String weatherNotFound;
@@ -46,12 +46,12 @@ public class ViewPagerActivity extends AppCompatActivity {
         SharedPreference.loadPreferences(getApplicationContext());
         setContentView(R.layout.activity_view_pager);
         viewPager = findViewById(R.id.viewPager);
-        myPager = new MyPagerAdapter(this);
+        myPager = new FiveDayForecastPagerAdapter(this);
         viewPager.setAdapter(myPager);
         findViews();
         textView.setText(wait);
         myToolbar.setTitle(nextDays);
-        getLocationFromName(MainActivity.getCity(), 6);
+        getLocationFromName(SharedPreference.getCity(), 6);
         viewPager.addOnPageChangeListener(listener);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -69,17 +69,17 @@ public class ViewPagerActivity extends AppCompatActivity {
         public void onPageSelected(int i) {
 
             if (i == 0) {
-                getLocationFromName(MainActivity.getCity(), 6);
+                getLocationFromName(SharedPreference.getCity(), 6);
             } else if (i == 1) {
-                getLocationFromName(MainActivity.getCity(), 14);
+                getLocationFromName(SharedPreference.getCity(), 14);
             } else if (i == 2) {
-                getLocationFromName(MainActivity.getCity(), 22);
+                getLocationFromName(SharedPreference.getCity(), 22);
             } else if (i == 3)
-                getLocationFromName(MainActivity.getCity(), 30);
+                getLocationFromName(SharedPreference.getCity(), 30);
             else if (i == 4)
-                getLocationFromName(MainActivity.getCity(), 38);
+                getLocationFromName(SharedPreference.getCity(), 38);
             else
-                getLocationFromName(MainActivity.getCity(), 0);
+                getLocationFromName(SharedPreference.getCity(), 0);
         }
 
         @Override
@@ -88,10 +88,10 @@ public class ViewPagerActivity extends AppCompatActivity {
         }
     };
 
-    private void getLocationFromName(final String City, final int i) {
+    private void getLocationFromName(final String cityApi, final int i) {
 
         OpenWeatherMap service = ServiceGenerator.createService(OpenWeatherMap.class);
-        Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(City, SharedPreference.getPreference("language"), SharedPreference.getPreference("units"));
+        Call<WeatherResponseNextDays> call = service.getCurrentDataFromNameNextDays(cityApi, SharedPreference.getPreference("language"), SharedPreference.getPreference("units"));
         call.enqueue(new Callback<WeatherResponseNextDays>() {
             @Override
             public void onResponse(Call<WeatherResponseNextDays> call, Response<WeatherResponseNextDays> response) {
@@ -99,17 +99,17 @@ public class ViewPagerActivity extends AppCompatActivity {
                     WeatherResponseNextDays weatherResponseNextDays = response.body();
                     Log.i("server Response", response.body().toString());
                     //ArrayList<List> list = response.body().getList();
-                    Log.i("working?", MainActivity.getCity());
+                    Log.i("working?", SharedPreference.getCity());
                     ArrayList<List> list = response.body().getList();
                     String date = list.get(i).getDtTxt();
                     String t = String.valueOf(weatherResponseNextDays.getList().get(i).getMain().getTemp());
                     Log.i("what is this", list.get(i).getDtTxt());
 
-                    message = date + "\r\n\r\n" + City + "\r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + list.get(i).getWeather().get(0).getDescription();
+                    message = date + "\r\n\r\n" + cityApi + "\r\n" + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + list.get(i).getWeather().get(0).getDescription();
                     textView.setText(message);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), City, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), cityApi, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -123,7 +123,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     private void findViews() {
         viewPager = findViewById(R.id.viewPager);
-        myPager = new MyPagerAdapter(this);
+        myPager = new FiveDayForecastPagerAdapter(this);
         viewPager.setAdapter(myPager);
         circleIndicator = findViewById(R.id.circle);
         circleIndicator.setViewPager(viewPager);
