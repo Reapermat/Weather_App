@@ -117,8 +117,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-
-
     private void setTempButton() {
         if (SharedPreference.getPreference("temperature") == null || SharedPreference.getPreference("units") == null) {
             SharedPreference.setPreference("temperature", "F");

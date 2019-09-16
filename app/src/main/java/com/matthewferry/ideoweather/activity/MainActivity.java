@@ -64,13 +64,11 @@ public class MainActivity extends AppCompatActivity {
     private static String language = "en";
     private String message = "";
     private Button check;
-    private Button nextDayForecast;
     private ImageButton favorite;
     private Intent i;
     private ImageButton setLocation;
     private LatLng userLocation;
     private boolean geo = false;
-    private boolean weatherSet;
     private String checkWeather_s;
     private String enterCity;
     private String weatherNotFound;
@@ -98,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
     private double maxTempCalc;
     private boolean locationSet = false;
     private String cityAdded;
-
 
 
     private void findViews() {
@@ -307,20 +304,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToViewPager(View view) {
-        if (getCity() != null) {
-            if (!geo)
-                check(view);
-            if (weatherSet) {
-                Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
-                startActivity(intent);
-                weatherSet = false;
-                favorite.setVisibility(View.INVISIBLE);
-            }
-        } else {
-            toastMessage();
-        }
-    }
 
     private void getInt() {
         i = getIntent();
@@ -397,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                         if (RealmUtil.getNumberOfElements(CurrentForecast.class) > 1) {
                             DataHelper.deleteCurrentForecast(realm);
                         }
-                        timeStamp = DateFormat.format("DD-MM-YYYY", new Date());
+                        timeStamp = DateFormat.format("dd-MM-yyyy", new Date());
                         SharedPreference.setPreference("timestamp", timeStamp.toString());
                         SharedPreference.setPreference("city", getCity());
                         if (RealmUtil.getNumberOfElements(CitySearchDB.class) > 4) {
@@ -441,7 +424,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<WeatherResponseToday> call, Response<WeatherResponseToday> response) {
                     try {
                         WeatherResponseToday weatherResponseToday = response.body();
-                        Log.i("server Response", response.body().toString());
                         temperature = weatherResponseToday.getMain().getTemp();
                         pressureCalc = roundToHalf(weatherResponseToday.getMain().getPressure());
                         humidityCalc = roundToHalf(weatherResponseToday.getMain().getHumidity());
@@ -449,7 +431,6 @@ public class MainActivity extends AppCompatActivity {
                         maxTempCalc = roundToHalf(weatherResponseToday.getMain().getTemp_max());
                         String t = String.valueOf(Math.round(temperature * 2) / 2.0);
                         ArrayList<WeatherToday> weatherList = response.body().getWeather();
-                        Log.i("weatherList:", weatherList.toString());
                         SharedPreference.message1 = cityApi + "\r\n" + presentTemp + t + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
                                 + minTemp + minTempCalc + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
                                 + maxTemp + maxTempCalc + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n"
@@ -462,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                             DataHelper.deleteCurrentForecast(realm);
                         }
 
-                        timeStamp = DateFormat.format("DD-MM-YYYY", new Date());
+                        timeStamp = DateFormat.format("dd-MM-yyyy", new Date());
                         SharedPreference.setPreference("timestamp", timeStamp.toString());
 
                     } catch (Exception e) {
@@ -499,7 +480,7 @@ public class MainActivity extends AppCompatActivity {
                     message = time + "\r\n" + temperature + (char) 0x00B0 + SharedPreference.getPreference("temperature") + "\r\n" + list.get(i).getWeather().get(0).getDescription();
                     onAddCitySearch(message);
                     if (RealmUtil.getNumberOfElements(CitySearchDB.class) == 5) {
-                        WeatherListFragment.doSmth();
+                        WeatherListFragment.addToList();
                         favorite.setVisibility(View.VISIBLE);
                         recreate();
                     }
@@ -560,10 +541,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         check.setText(checkWeather_s);
         editText.setHint(enterCity);
-        timeStart = DateFormat.format("DD-MM-YYYY", new Date());
+        timeStart = DateFormat.format("dd-MM-yyyy", new Date());
 
         if (editText.getText().toString().equals("") && RealmUtil.getNumberOfElements(CurrentForecast.class) != 0 && timeStart.equals(SharedPreference.getPreference("timestamp"))) {
-            //favorite.setVisibility(View.INVISIBLE);
             SharedPreference.message1 = RealmUtil.getCitySearch();
         }
         editText.setText(SharedPreference.getPreference("city"));

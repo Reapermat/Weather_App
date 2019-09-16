@@ -35,6 +35,7 @@ public class SharedPreference {
 
     public static void loadPreferences(Context context) {
         try {
+            Log.i("language", Locale.getDefault().getDisplayLanguage());
             pref = PreferenceManager.getDefaultSharedPreferences(context);
             lang = pref.getString("language", null);
             Log.i("language", SharedPreference.getPreference("language"));
@@ -42,13 +43,16 @@ public class SharedPreference {
             Log.i("visibility", SharedPreference.getPreference("weatherSet"));
             setLocal(lang, context);
         } catch (Exception e) {
+            if(Locale.getDefault().getDisplayLanguage().equals("English")){
+                savePreferences("language", "en", context);
+            }else
+                savePreferences("language", "pl", context);
             e.printStackTrace();
         }
     }
 
     public static String getPreference(String key) {
         if (key.equals(null)) {
-            Log.i("in", "?");
             key = "temperature";
             setPreference(key, "F");
             savePreferences(key, "F", context);

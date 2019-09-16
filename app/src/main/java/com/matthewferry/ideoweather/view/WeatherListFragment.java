@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.matthewferry.ideoweather.R;
 import com.matthewferry.ideoweather.activity.DetailedWeatherForecastForNextDays;
@@ -22,12 +21,11 @@ import java.util.ArrayList;
 import io.realm.Realm;
 
 
-public class WeatherListFragment extends Fragment{
+public class WeatherListFragment extends Fragment {
     private RecyclerView recyclerView;
     public WeatherRecyclerViewAdapter weatherRecyclerViewAdapter;
     public static ArrayList<GetWeatherForecast> getWeatherForecasts;
     public static Realm realm;
-    private WeatherRecyclerViewAdapter adapter;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
@@ -52,10 +50,10 @@ public class WeatherListFragment extends Fragment{
         super.onCreate(savedInstanceState);
         getWeatherForecasts = new ArrayList<>();
         realm = Realm.getDefaultInstance();
-        doSmth();
+        addToList();
     }
 
-    public static void doSmth() {
+    public static void addToList() {
         try {
             if (realm.where(CitySearchDB.class).count() == 5) {
                 for (int i = 0; i < 5; i++) {
@@ -69,7 +67,7 @@ public class WeatherListFragment extends Fragment{
 
     private void onItemClickToast(int position) {
         Intent intent = new Intent(getContext(), DetailedWeatherForecastForNextDays.class);
-        intent.putExtra("Weather_Forecast", getWeatherForecasts.get(position).getwCity());
+        intent.putExtra("Weather_Forecast", getWeatherForecasts.get(position).getMessage());
         startActivity(intent);
     }
 }
